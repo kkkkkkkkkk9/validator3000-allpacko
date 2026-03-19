@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validator 3000: Allpacko</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+  }
+
+  /* === Review Layout === */
+  .review-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: 800px;
+    position: relative;
+  }
+
+  /* Flow + TOC wrapper */
+  .flow-toc-wrapper {
+    display: flex;
+    align-items: flex-start;
+    position: fixed;
+    left: 24px;
+    top: 24px;
+  }
+
+  .flow-panel {
+    width: 180px;
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    font-family: inherit;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+  }
+
+  .flow-panel-title {
+    color: #555;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 16px 16px;
+    border-bottom: 1px solid #222;
+    margin-bottom: 8px;
+  }
+
+  .flow-item {
+    padding: 8px 16px 8px 24px;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.1s, background 0.1s;
+    position: relative;
+  }
+
+  .flow-item:hover {
+    color: #aaa;
+    background: #111;
+  }
+
+  .flow-item.active {
+    color: #fff;
+    background: #111;
+  }
+
+  .flow-item.active::before {
+    content: '>';
+    position: absolute;
+    left: 12px;
+    color: #fff;
+  }
+
+  .light .flow-panel {
+    background: #f4f4f4;
+    border-color: #ddd;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+
+  .light .flow-panel-title {
+    color: #aaa;
+    border-color: #ddd;
+  }
+
+  .flow-subitem {
+    padding: 5px 16px 5px 38px;
+    color: #444;
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.1s, background 0.1s;
+    position: relative;
+  }
+  .flow-subitem:hover { color: #888; background: #111; }
+  .flow-subitem.active { color: #ccc; }
+  .flow-subitem.active::before {
+    content: '·';
+    position: absolute;
+    left: 28px;
+    color: #ccc;
+  }
+
+  .light .flow-item { color: #aaa; }
+  .light .flow-item:hover { color: #444; background: #eaeaea; }
+  .light .flow-item.active { color: #111; background: #eaeaea; }
+  .light .flow-item.active::before { color: #111; }
+  .light .flow-subitem { color: #aaa; }
+  .light .flow-subitem:hover { color: #555; background: #eaeaea; }
+  .light .flow-subitem.active { color: #333; }
+  .light .flow-subitem.active::before { color: #333; }
+
+  /* TOC Panel */
+  .toc-panel {
+    width: 220px;
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    font-family: inherit;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .toc-title {
+    color: #555;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 16px 16px;
+    border-bottom: 1px solid #222;
+    margin-bottom: 8px;
+  }
+
+  .toc-section {
+    padding: 12px 16px 4px;
+    color: #444;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .toc-item {
+    padding: 8px 16px 8px 24px;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.1s, background 0.1s;
+    position: relative;
+  }
+
+  .toc-item:hover {
+    color: #aaa;
+    background: #111;
+  }
+
+  .toc-item.active {
+    color: #fff;
+    background: #111;
+  }
+
+  .toc-item.active::before {
+    content: '>';
+    position: absolute;
+    left: 12px;
+    color: #fff;
+  }
+
+  .toc-item.has-children.active::before {
+    content: 'v';
+  }
+
+  .toc-subitem {
+    padding: 5px 16px 5px 38px;
+    color: #444;
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.1s, background 0.1s;
+    position: relative;
+  }
+
+  .toc-subitem:hover {
+    color: #888;
+    background: #111;
+  }
+
+  .toc-subitem.active {
+    color: #ccc;
+  }
+
+  .toc-subitem.active::before {
+    content: '·';
+    position: absolute;
+    left: 28px;
+    color: #ccc;
+  }
+
+  .toc-comment-count {
+    color: #555;
+    font-size: 10px;
+    margin-left: 4px;
+  }
+  .light .toc-comment-count { color: #aaa; }
+
+  /* Comments Panel */
+  .comments-panel {
+    width: 280px;
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: inherit;
+    position: fixed;
+    top: 50%;
+    left: calc(50% + 260px);
+    display: none;
+    transform: translateY(-50%);
+  }
+
+  .comments-header {
+    color: #555;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid #222;
+  }
+
+  .comments-flow-label {
+    color: #888;
+    font-size: 11px;
+    padding: 12px 16px 0;
+  }
+
+  .comments-flow-label::before {
+    content: 'Screen: ';
+    color: #555;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .light .comments-flow-label::before { color: #aaa; }
+
+  .comments-input-area {
+    padding: 12px 16px;
+    border-bottom: 1px solid #222;
+  }
+
+  .comments-input-area textarea {
+    width: 100%;
+    background: none;
+    border: 1px solid #333;
+    color: #ccc;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    height: 72px;
+  }
+
+  .comments-input-area textarea::placeholder { color: #333; }
+  .comments-input-area textarea:focus { border-color: #555; }
+
+  .comment-submit-btn {
+    width: 100%;
+    margin-top: 8px;
+    border: 1px solid #444;
+    background: none;
+    color: #888;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .comment-submit-btn:hover {
+    border-color: #888;
+    color: #fff;
+  }
+
+  .comments-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .comment-item {
+    padding: 10px 16px;
+    border-bottom: 1px solid #151515;
+  }
+
+  .comment-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .comment-name {
+    color: #888;
+    font-size: 11px;
+  }
+
+  .comment-time {
+    color: #333;
+    font-size: 10px;
+  }
+
+  .comment-text {
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .reviewer-prompt {
+    padding: 16px;
+    border-bottom: 1px solid #222;
+  }
+
+  .reviewer-prompt label {
+    color: #555;
+    font-size: 11px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .reviewer-prompt input {
+    width: 100%;
+    background: none;
+    border: 1px solid #333;
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 8px 10px;
+    outline: none;
+  }
+
+  .reviewer-prompt input::placeholder { color: #333; }
+  .reviewer-prompt input:focus { border-color: #555; }
+
+  .comments-status {
+    padding: 8px 16px;
+    color: #333;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .comments-sync-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-top: 1px solid #222;
+    margin-top: auto;
+  }
+
+  .sync-status {
+    color: #333;
+    font-size: 10px;
+  }
+
+  .sync-btn {
+    background: none;
+    border: 1px solid #222;
+    color: #444;
+    font-family: inherit;
+    font-size: 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  .sync-btn:hover {
+    border-color: #444;
+    color: #888;
+  }
+
+  /* iPhone frame — wireframe/technical drawing style */
+  .phone-frame {
+    position: relative;
+    padding: 7px;
+    background: none;
+    border: 1px solid #555;
+    border-radius: 58px;
+  }
+  .light .phone-frame {
+    border-color: #bbb;
+  }
+
+  /* Side buttons — outlined, not filled */
+  .phone-btn {
+    position: absolute;
+    z-index: 5;
+    background: none;
+    border: 1px solid #555;
+  }
+  .light .phone-btn { border-color: #bbb; }
+
+  .phone-btn-action {
+    left: -4px;
+    top: 135px;
+    width: 3px;
+    height: 26px;
+    border-radius: 2px 0 0 2px;
+    border-right: none;
+  }
+  .phone-btn-volup {
+    left: -4px;
+    top: 185px;
+    width: 3px;
+    height: 48px;
+    border-radius: 2px 0 0 2px;
+    border-right: none;
+  }
+  .phone-btn-voldown {
+    left: -4px;
+    top: 243px;
+    width: 3px;
+    height: 48px;
+    border-radius: 2px 0 0 2px;
+    border-right: none;
+  }
+  .phone-btn-power {
+    right: -4px;
+    top: 200px;
+    width: 3px;
+    height: 68px;
+    border-radius: 0 2px 2px 0;
+    border-left: none;
+  }
+
+  .phone {
+    width: 380px;
+    height: 780px;
+    background: #000;
+    border: none;
+    border-radius: 51px;
+    overflow: hidden;
+    position: relative;
+  }
+  .light .phone { background: #fff; }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    padding: 40px 24px 32px;
+    animation: slideIn 0.15s ease-out;
+    position: relative;
+    color: #aaa;
+    font-size: 13px;
+  }
+
+  .screen.active { display: flex; }
+
+  @keyframes slideIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ASCII box drawing */
+  .box {
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.1s;
+  }
+  .box:hover { border-color: #888; }
+
+  .box-dashed {
+    border: 1px dashed #444;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    text-align: center;
+    color: #666;
+  }
+  .box-dashed:hover { border-color: #777; color: #999; }
+
+  .divider {
+    border-top: 1px solid #333;
+    margin: 8px 0;
+  }
+
+  /* Typography */
+  .title {
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    font-weight: normal;
+  }
+
+  .subtitle {
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .label {
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Inputs */
+  .ascii-input {
+    background: none;
+    border: 1px solid #555;
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    width: 100%;
+  }
+  .ascii-input::placeholder { color: #444; }
+  .ascii-input:focus { border-color: #888; }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .input-row .ascii-input { flex: 1; }
+
+  .arrow-btn {
+    border: 1px solid #fff;
+    border-radius: 8px;
+    background: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    width: 42px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .arrow-btn:hover { background: #222; }
+
+  .primary-btn {
+    border: 1px solid #fff;
+    border-radius: 8px;
+    background: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 1px;
+  }
+  .primary-btn:hover { background: #222; }
+  .primary-btn.disabled { border-color: #333; color: #333; cursor: default; }
+  .primary-btn.disabled:hover { background: none; }
+  .light .primary-btn.disabled { border-color: #ccc; color: #ccc; }
+  .light .primary-btn.disabled:hover { background: none; }
+
+  /* Back button */
+  .back-btn {
+    position: absolute;
+    top: 38px;
+    left: 24px;
+    background: none;
+    border: none;
+    color: #555;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .back-btn:hover { color: #aaa; }
+
+  /* Close button (walkthrough) */
+  .close-btn {
+    position: absolute;
+    top: 38px;
+    right: 24px;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .close-btn:hover { color: #aaa; }
+  .light .close-btn { color: #aaa; }
+  .light .close-btn:hover { color: #555; }
+
+  /* Walkthrough content area */
+  .wt-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px 0;
+  }
+
+  .wt-content .slide-icon {
+    height: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  .wt-title {
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: normal;
+  }
+
+  .wt-body {
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 260px;
+  }
+
+  .wt-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 8px;
+  }
+
+  .wt-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0 4px;
+  }
+
+  .wt-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: #333;
+  }
+
+  .wt-dot.active {
+    background: #fff;
+    width: 16px;
+  }
+
+  .wt-arrow {
+    background: none;
+    border: none;
+    color: #555;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .wt-arrow:hover { color: #aaa; }
+  .wt-arrow.hidden { visibility: hidden; }
+
+  .light .wt-dot { background: #ccc; }
+  .light .wt-dot.active { background: #333; }
+  .light .wt-arrow { color: #aaa; }
+  .light .wt-arrow:hover { color: #555; }
+
+  .light .wt-title { color: #111; }
+  .light .wt-body { color: #888; }
+
+  /* Progress dots */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    font-size: 14px;
+  }
+
+  .dot { color: #333; }
+  .dot.active { color: #fff; }
+
+  /* Member rows */
+  .member-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .member-name {
+    flex: 1;
+    color: #ccc;
+  }
+
+  .member-name-input {
+    flex: 1;
+    color: #ccc;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    outline: none;
+  }
+  .member-name-input:focus {
+    border-bottom: 1px solid #555;
+  }
+
+  .member-done-btn {
+    background: none;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #ccc;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 2px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .member-done-btn:hover { color: #fff; border-color: #888; }
+  .light .member-done-btn { color: #555; border-color: #aaa; }
+  .light .member-done-btn:hover { color: #111; border-color: #666; }
+
+  .member-role {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+
+  .member-role.organizer { color: #fff; border-color: #666; }
+  .member-role.packer { color: #6af; border-color: #346; }
+  .member-role.dependent { color: #c8f; border-color: #436; }
+
+  .member-delete {
+    background: none;
+    border: none;
+    color: #444;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .member-delete:hover { color: #f66; }
+
+  .member-list {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Add form */
+  .add-form {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 6px;
+  }
+
+  .add-form.visible { display: flex; }
+
+  .role-picker {
+    display: flex;
+    gap: 8px;
+  }
+
+  .role-option {
+    flex: 1;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .role-option:hover { border-color: #555; }
+
+  .role-option.selected {
+    border-color: #fff;
+    color: #fff;
+  }
+
+  .role-label {
+    color: inherit;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .role-option.selected .role-label { color: #fff; }
+
+  .role-desc {
+    color: #555;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .cancel-btn {
+    flex: 1;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: none;
+    color: #666;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .cancel-btn:hover { border-color: #555; }
+
+  .add-confirm-btn {
+    flex: 1;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    background: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .add-confirm-btn:hover { background: #222; }
+
+  /* Home screen */
+  .home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+  }
+
+  .home-title {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .settings-btn {
+    background: none;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #555;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+
+  .trip-card {
+    border: 1px solid #444;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .trip-card:hover { border-color: #666; }
+
+  .trip-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px 0;
+  }
+
+  .trip-dest {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .trip-progress {
+    color: #6f6;
+    font-size: 12px;
+  }
+
+  .trip-dates {
+    color: #666;
+    font-size: 11px;
+    padding: 4px 14px;
+  }
+
+  .trip-avatars {
+    display: flex;
+    gap: 8px;
+    padding: 8px 14px 12px;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    border-top: 1px solid #333;
+    padding-bottom: 16px;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    color: #444;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .tab.active { color: #fff; }
+  .tab + .tab { border-left: 1px solid #333; }
+
+  .new-trip-btn {
+    border: 1px dashed #333;
+    border-radius: 8px;
+    background: none;
+    color: #555;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 14px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+  }
+  .new-trip-btn:hover { border-color: #555; color: #888; }
+
+  .skip-btn {
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .skip-btn:hover { color: #888; }
+
+  /* Screen label */
+  .screen-label {
+    position: absolute;
+    top: 28px;
+    right: 24px;
+    font-size: 10px;
+    color: #333;
+  }
+
+  .bottom-section {
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Auth specific */
+  .auth-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-logo {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-align: center;
+    white-space: pre;
+    line-height: 1.3;
+  }
+
+  .auth-tagline {
+    color: #555;
+    font-size: 12px;
+    margin-bottom: 50px;
+  }
+
+  /* Carousel */
+  .carousel-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-bottom: 1px solid #222;
+    margin-bottom: 16px;
+  }
+
+  .carousel-track {
+    display: flex;
+    flex: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .carousel-slide {
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px 16px;
+  }
+
+  .slide-icon {
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    color: #888;
+    white-space: pre;
+    line-height: 1.3;
+    text-align: left;
+    margin-bottom: 48px;
+  }
+
+  #carousel-track .slide-icon {
+    height: 140px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .slide-title {
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .slide-desc {
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .carousel-arrow {
+    background: none;
+    border: none;
+    color: #555;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .carousel-arrow:hover { color: #aaa; }
+  .carousel-arrow.hidden { visibility: hidden; }
+
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: #333;
+    transition: width 0.3s;
+    cursor: pointer;
+  }
+
+  .carousel-dot.active {
+    background: transparent;
+    width: 16px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #555;
+  }
+
+  .carousel-dot.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 3px;
+    animation: dotFill 5s linear forwards;
+  }
+
+  @keyframes dotFill {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  /* Mode toggle */
+  .mode-toggle {
+    float: right;
+    background: none;
+    border: 1px solid #333;
+    color: #555;
+    font-family: inherit;
+    font-size: 10px;
+    padding: 2px 8px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+  .mode-toggle:hover { border-color: #555; color: #888; }
+
+  /* === Light Mode === */
+  body.light { background: #e4e4e4; }
+
+  .light .phone { background: #fff; border-color: #bbb; }
+  .light .screen { color: #555; }
+  .light .title { color: #111; }
+  .light .subtitle { color: #888; }
+  .light .label { color: #777; }
+  .light .slide-title { color: #111; }
+  .light .slide-desc { color: #888; }
+  .light .slide-icon { color: #777; }
+
+  .light .ascii-input { border-color: #bbb; color: #111; }
+  .light .ascii-input::placeholder { color: #bbb; }
+  .light .ascii-input:focus { border-color: #888; }
+  .light .arrow-btn { border-color: #111; color: #111; }
+  .light .arrow-btn:hover { background: #eee; }
+  .light .primary-btn { border-color: #111; color: #111; }
+  .light .primary-btn:hover { background: #eee; }
+  .light .back-btn { color: #aaa; }
+  .light .back-btn:hover { color: #555; }
+  .light .screen-label { color: #ccc; }
+  .light .skip-btn { color: #aaa; }
+  .light .skip-btn:hover { color: #555; }
+
+  .light .box { border-color: #bbb; }
+  .light .box:hover { border-color: #888; }
+  .light .box-dashed { border-color: #ccc; color: #aaa; }
+  .light .divider { border-color: #ddd; }
+  .light .dot { color: #ccc; }
+  .light .dot.active { color: #111; }
+
+  .light .member-row { border-color: #ddd; }
+  .light .member-name { color: #333; }
+  .light .member-name-input { color: #333; }
+  .light .member-name-input:focus { border-bottom-color: #ccc; }
+  .light .member-role { color: #777; border-color: #ccc; }
+  .light .member-role.organizer { color: #111; border-color: #999; }
+  .light .member-role.packer { color: #2266cc; border-color: #aaccee; }
+  .light .member-role.dependent { color: #8844bb; border-color: #ccaaee; }
+  .light .member-delete { color: #ccc; }
+  .light .member-delete:hover { color: #e33; }
+  .light .role-option { border-color: #ddd; }
+  .light .role-option:hover { border-color: #aaa; }
+  .light .role-option.selected { border-color: #111; color: #111; }
+  .light .role-option.selected .role-label { color: #111; }
+  .light .role-desc { color: #aaa; }
+  .light .cancel-btn { border-color: #ddd; color: #999; }
+  .light .add-confirm-btn { border-color: #111; color: #111; }
+  .light .add-confirm-btn:hover { background: #eee; }
+
+  .light .home-header { border-color: #ddd; }
+  .light .home-title { color: #111; }
+  .light .settings-btn { border-color: #ddd; color: #aaa; }
+  .light .trip-card { border-color: #ccc; }
+  .light .trip-card:hover { border-color: #999; }
+  .light .trip-dest { color: #111; }
+  .light .trip-progress { color: #2a2; }
+  .light .trip-dates { color: #999; }
+  .light .trip-avatars { color: #777; }
+  .light .tab-bar { border-color: #ddd; }
+  .light .tab { color: #ccc; }
+  .light .tab.active { color: #111; }
+  .light .tab + .tab { border-color: #ddd; }
+  .light .new-trip-btn { border-color: #ddd; color: #aaa; }
+  .light .new-trip-btn:hover { border-color: #aaa; color: #777; }
+
+  .light .carousel-wrap { border-color: #eee; }
+  .light .carousel-arrow { color: #aaa; }
+  .light .carousel-arrow:hover { color: #555; }
+  .light .carousel-dot { background: #999; }
+  .light .carousel-dot.active { background: transparent; border-color: #999; }
+  .light .carousel-dot.active::after { background: #333; }
+
+  .light .toc-panel { background: #f4f4f4; border-color: #ddd; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .light .toc-title { color: #aaa; border-color: #ddd; }
+  .light .toc-section { color: #bbb; }
+  .light .toc-item { color: #888; }
+  .light .toc-item:hover { color: #444; background: #eaeaea; }
+  .light .toc-item.active { color: #111; background: #eaeaea; }
+  .light .toc-item.active::before { color: #111; }
+  .light .toc-subitem { color: #bbb; }
+  .light .toc-subitem:hover { color: #666; background: #eaeaea; }
+  .light .toc-subitem.active { color: #444; }
+  .light .toc-subitem.active::before { color: #444; }
+
+  .light .comments-panel { background: #f4f4f4; border-color: #ddd; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .light .comments-header { color: #aaa; border-color: #ddd; }
+  .light .comments-flow-label { color: #666; }
+  .light #commenting-as { color: #999; }
+  .light #commenting-as-name { color: #555; }
+  .light .comments-input-area { border-color: #ddd; }
+  .light .comments-input-area textarea { border-color: #ccc; color: #333; }
+  .light .comments-input-area textarea::placeholder { color: #bbb; }
+  .light .comments-input-area textarea:focus { border-color: #999; }
+  .light .comment-submit-btn { border-color: #ccc; color: #777; }
+  .light .comment-submit-btn:hover { border-color: #888; color: #111; }
+  .light .comment-item { border-color: #eee; }
+  .light .comment-name { color: #666; }
+  .light .comment-time { color: #bbb; }
+  .light .comment-text { color: #444; }
+  .light .comments-status { color: #bbb; }
+  .light .comments-sync-bar { border-color: #ddd; }
+  .light .sync-status { color: #bbb; }
+  .light .sync-btn { border-color: #ddd; color: #aaa; }
+  .light .sync-btn:hover { border-color: #aaa; color: #666; }
+  .light .reviewer-prompt label { color: #999; }
+  .light .reviewer-prompt input { border-color: #ccc; color: #111; }
+  .light .reviewer-prompt input::placeholder { color: #bbb; }
+
+  .mode-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #555;
+    font-family: inherit;
+    font-size: 10px;
+    padding: 4px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    z-index: 100;
+  }
+  .mode-toggle:hover { border-color: #555; color: #888; }
+  .light .mode-toggle { border-color: #ccc; color: #aaa; }
+  .light .mode-toggle:hover { border-color: #999; color: #666; }
+
+  /* Admin role */
+  .member-role.admin { color: #fff; border-color: #666; }
+  .light .member-role.admin { color: #111; border-color: #999; }
+
+  /* Two add buttons row */
+  .add-buttons-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .add-btn {
+    flex: 1;
+    border: 1px dashed #444;
+    border-radius: 8px;
+    background: none;
+    color: #888;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 14px 8px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .add-btn:hover { border-color: #777; color: #ccc; }
+  .light .add-btn { border-color: #ccc; color: #888; }
+  .light .add-btn:hover { border-color: #999; color: #555; }
+
+  /* Contact list */
+  .contact-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid #222;
+    cursor: pointer;
+    gap: 12px;
+  }
+  .contact-row:hover { background: #111; }
+  .contact-name { color: #ccc; flex: 1; font-size: 13px; }
+  .contact-phone { color: #555; font-size: 11px; }
+  .light .contact-row { border-color: #eee; }
+  .light .contact-row:hover { background: #f5f5f5; }
+  .light .contact-name { color: #333; }
+  .light .contact-phone { color: #aaa; }
+
+  /* Permission dialog */
+  .permission-dialog {
+    border: 1px solid #555;
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .permission-title {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: normal;
+  }
+  .permission-body {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .permission-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .permission-btn {
+    flex: 1;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: none;
+    color: #888;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .permission-btn:hover { border-color: #888; color: #ccc; }
+  .permission-btn.allow { border-color: #fff; color: #fff; }
+  .permission-btn.allow:hover { background: #222; }
+  .light .permission-dialog { border-color: #bbb; }
+  .light .permission-title { color: #111; }
+  .light .permission-body { color: #888; }
+  .light .permission-btn { border-color: #bbb; color: #777; }
+  .light .permission-btn:hover { border-color: #888; color: #444; }
+  .light .permission-btn.allow { border-color: #111; color: #111; }
+  .light .permission-btn.allow:hover { background: #eee; }
+
+  /* Member phone snippet */
+  .member-phone {
+    color: #555;
+    font-size: 11px;
+  }
+  .light .member-phone { color: #aaa; }
+
+  /* Tappable role badge */
+  .member-role.tappable { cursor: pointer; position: relative; }
+  .member-role.tappable:hover { opacity: 1; }
+  .member-role.tappable::after { content: ' v'; font-size: 9px; }
+  .role-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    z-index: 10;
+    min-width: 120px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .role-dropdown-item {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    color: #ccc;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    display: block;
+  }
+  .role-dropdown-item:hover { background: #333; color: #fff; }
+  .role-dropdown-item + .role-dropdown-item { border-top: 1px solid #333; }
+  .role-dropdown-item.selected { color: #fff; }
+  .role-dropdown-item.selected::before { content: '\2713 '; }
+  .light .role-dropdown { background: #fff; border-color: #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .light .role-dropdown-item { color: #666; }
+  .light .role-dropdown-item:hover { background: #f0f0f0; color: #111; }
+  .light .role-dropdown-item + .role-dropdown-item { border-color: #eee; }
+  .light .role-dropdown-item.selected { color: #111; }
+
+  /* App name bar */
+  .app-name-bar {
+    padding: 8px 16px;
+    color: #555;
+    font-size: 10px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #222;
+  }
+
+  .light .app-name-bar { color: #aaa; border-color: #ddd; }
+
+  /* Prototyper branding */
+  .prototyper-brand {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+  }
+
+  .prototyper-brand img {
+    height: 24px;
+  }
+
+  /* === Theme System === */
+  /* All themes except dark build on .light */
+
+  /* Sky — soft blue (panels lighter, background darker) */
+  body.light.theme-sky { background: #dfe9f4; }
+  body.light.theme-sky .flow-panel,
+  body.light.theme-sky .toc-panel,
+  body.light.theme-sky .comments-panel { background: #edf3fa; border-color: #c5d5e8; }
+  body.light.theme-sky .flow-panel-title,
+  body.light.theme-sky .toc-title,
+  body.light.theme-sky .comments-header,
+  body.light.theme-sky .comments-input-area,
+  body.light.theme-sky .comments-sync-bar { border-color: #c5d5e8; }
+  body.light.theme-sky .flow-item:hover,
+  body.light.theme-sky .flow-item.active,
+  body.light.theme-sky .toc-item:hover,
+  body.light.theme-sky .toc-item.active,
+  body.light.theme-sky .toc-subitem:hover { background: #dfe9f4; }
+  body.light.theme-sky .comment-item { border-color: #d5e1ee; }
+  body.light.theme-sky .reviewer-prompt { border-color: #c5d5e8; }
+
+  /* Sage — soft green (panels lighter, background darker) */
+  body.light.theme-sage { background: #e2ead9; }
+  body.light.theme-sage .flow-panel,
+  body.light.theme-sage .toc-panel,
+  body.light.theme-sage .comments-panel { background: #eff3ed; border-color: #c8d5bc; }
+  body.light.theme-sage .flow-panel-title,
+  body.light.theme-sage .toc-title,
+  body.light.theme-sage .comments-header,
+  body.light.theme-sage .comments-input-area,
+  body.light.theme-sage .comments-sync-bar { border-color: #c8d5bc; }
+  body.light.theme-sage .flow-item:hover,
+  body.light.theme-sage .flow-item.active,
+  body.light.theme-sage .toc-item:hover,
+  body.light.theme-sage .toc-item.active,
+  body.light.theme-sage .toc-subitem:hover { background: #e2ead9; }
+  body.light.theme-sage .comment-item { border-color: #dae3d2; }
+  body.light.theme-sage .reviewer-prompt { border-color: #c8d5bc; }
+
+  /* Lavender — soft purple (panels lighter, background darker) */
+  body.light.theme-lavender { background: #e5dff2; }
+  body.light.theme-lavender .flow-panel,
+  body.light.theme-lavender .toc-panel,
+  body.light.theme-lavender .comments-panel { background: #f1eef6; border-color: #cfc5e2; }
+  body.light.theme-lavender .flow-panel-title,
+  body.light.theme-lavender .toc-title,
+  body.light.theme-lavender .comments-header,
+  body.light.theme-lavender .comments-input-area,
+  body.light.theme-lavender .comments-sync-bar { border-color: #cfc5e2; }
+  body.light.theme-lavender .flow-item:hover,
+  body.light.theme-lavender .flow-item.active,
+  body.light.theme-lavender .toc-item:hover,
+  body.light.theme-lavender .toc-item.active,
+  body.light.theme-lavender .toc-subitem:hover { background: #e5dff2; }
+  body.light.theme-lavender .comment-item { border-color: #ded6ec; }
+  body.light.theme-lavender .reviewer-prompt { border-color: #cfc5e2; }
+
+  /* Sand — warm beige (panels lighter, background darker) */
+  body.light.theme-sand { background: #ebe5d9; }
+  body.light.theme-sand .flow-panel,
+  body.light.theme-sand .toc-panel,
+  body.light.theme-sand .comments-panel { background: #f4f1ec; border-color: #d6cdbf; }
+  body.light.theme-sand .flow-panel-title,
+  body.light.theme-sand .toc-title,
+  body.light.theme-sand .comments-header,
+  body.light.theme-sand .comments-input-area,
+  body.light.theme-sand .comments-sync-bar { border-color: #d6cdbf; }
+  body.light.theme-sand .flow-item:hover,
+  body.light.theme-sand .flow-item.active,
+  body.light.theme-sand .toc-item:hover,
+  body.light.theme-sand .toc-item.active,
+  body.light.theme-sand .toc-subitem:hover { background: #ebe5d9; }
+  body.light.theme-sand .comment-item { border-color: #e4ddd0; }
+  body.light.theme-sand .reviewer-prompt { border-color: #d6cdbf; }
+
+  /* Rose — soft warm pink (panels lighter, background darker) */
+  body.light.theme-rose { background: #f0e2e4; }
+  body.light.theme-rose .flow-panel,
+  body.light.theme-rose .toc-panel,
+  body.light.theme-rose .comments-panel { background: #f6eeef; border-color: #e0c8cc; }
+  body.light.theme-rose .flow-panel-title,
+  body.light.theme-rose .toc-title,
+  body.light.theme-rose .comments-header,
+  body.light.theme-rose .comments-input-area,
+  body.light.theme-rose .comments-sync-bar { border-color: #e0c8cc; }
+  body.light.theme-rose .flow-item:hover,
+  body.light.theme-rose .flow-item.active,
+  body.light.theme-rose .toc-item:hover,
+  body.light.theme-rose .toc-item.active,
+  body.light.theme-rose .toc-subitem:hover { background: #f0e2e4; }
+  body.light.theme-rose .comment-item { border-color: #eadcde; }
+  body.light.theme-rose .reviewer-prompt { border-color: #e0c8cc; }
+</style>
+</head>
+<body>
+
+<button class="mode-toggle" onclick="cycleTheme()" id="mode-toggle">Theme: sky</button>
+
+<div class="review-layout">
+
+  <!-- Flow Panel + TOC Panel -->
+  <div class="flow-toc-wrapper">
+  <div class="flow-panel">
+    <div class="flow-panel-title">User Flows</div>
+    <div class="flow-item active">Sign up</div>
+    <div class="flow-subitem active">New user</div>
+    <div class="flow-subitem" style="opacity:0.4; cursor:default;">Invited user <span style="font-size:9px; border:1px solid; padding:0 4px; margin-left:4px; border-radius:3px;">WIP</span></div>
+  </div>
+  <div class="toc-panel">
+    <div class="toc-title">Table of Contents</div>
+
+    <div class="toc-section">Sign in / Sign up</div>
+    <div class="toc-item has-children active" data-flow="sign_in" data-screen="screen-auth" data-slide="0" onclick="tocNav(this)">Continue with phone</div>
+    <div class="toc-subitem active" data-flow="slide_allpacko" data-screen="screen-auth" data-slide="0" onclick="tocNav(this)">Allpacko</div>
+    <div class="toc-subitem" data-flow="slide_bundles" data-screen="screen-auth" data-slide="1" onclick="tocNav(this)">Build it once</div>
+    <div class="toc-subitem" data-flow="slide_family" data-screen="screen-auth" data-slide="2" onclick="tocNav(this)">Same page</div>
+    <div class="toc-subitem" data-flow="slide_checklist" data-screen="screen-auth" data-slide="3" onclick="tocNav(this)">Leave stress</div>
+    <div class="toc-item has-children" data-flow="otp_verify" data-screen="screen-otp" onclick="tocNav(this)">OTP verification</div>
+    <div class="toc-subitem" data-flow="otp_verify" data-screen="screen-otp" onclick="tocNav(this)">Enter code</div>
+    <div class="toc-subitem" data-flow="otp_wrong" data-screen="screen-otp-wrong" onclick="tocNav(this)">Wrong code</div>
+    <div class="toc-subitem" data-flow="otp_resend" data-screen="screen-otp-resend" onclick="tocNav(this)">Resend code</div>
+
+    <div class="toc-section">Onboarding</div>
+    <div class="toc-item has-children" data-flow="enter_name" data-screen="screen-name" onclick="tocNav(this)">Welcome</div>
+    <div class="toc-subitem" data-flow="enter_name" data-screen="screen-name" onclick="tocNav(this)">What's your name?</div>
+    <div class="toc-subitem" data-flow="wt_intro" data-screen="screen-walkthrough-intro" onclick="tocNav(this)">Nice to meet you</div>
+    <div class="toc-item has-children" data-flow="wt_walkthrough" data-screen="screen-walkthrough-1" onclick="tocNav(this)">Walkthrough</div>
+    <div class="toc-subitem" data-flow="wt_bundles" data-screen="screen-walkthrough-1" onclick="tocNav(this)">Bundles</div>
+    <div class="toc-subitem" data-flow="wt_essentials" data-screen="screen-walkthrough-2" onclick="tocNav(this)">Essentials</div>
+    <div class="toc-subitem" data-flow="wt_family" data-screen="screen-walkthrough-3" onclick="tocNav(this)">Family</div>
+    <div class="toc-subitem" data-flow="wt_progress" data-screen="screen-walkthrough-4" onclick="tocNav(this)">Progress</div>
+    <div class="toc-subitem" data-flow="wt_assign" data-screen="screen-walkthrough-5" onclick="tocNav(this)">Assign</div>
+    <div class="toc-subitem" data-flow="wt_ready" data-screen="screen-walkthrough-6" onclick="tocNav(this)">All packed</div>
+
+    <div class="toc-section">Add your family</div>
+    <div class="toc-item" data-flow="invite_family" data-screen="screen-members" onclick="tocNav(this)">Members</div>
+    <div class="toc-item has-children" data-flow="contacts_permission" data-screen="screen-contacts-permission" onclick="tocNav(this)">Contacts permission</div>
+    <div class="toc-subitem" data-flow="contacts_permission" data-screen="screen-contacts-permission" onclick="tocNav(this)">Initial prompt</div>
+    <div class="toc-subitem" data-flow="contacts_access_level" data-screen="screen-contacts-access-level" onclick="tocNav(this)">Access level</div>
+    <div class="toc-subitem" data-flow="contacts_denied" data-screen="screen-contacts-denied" onclick="tocNav(this)">Denied</div>
+    <div class="toc-item" data-flow="contacts_picker" data-screen="screen-contacts-picker" onclick="tocNav(this)">Contact picker</div>
+
+    <div class="toc-section">Home</div>
+    <div class="toc-item has-children" data-flow="home_screen" data-screen="screen-home" onclick="tocNav(this)">Zero state</div>
+    <div class="toc-subitem" data-flow="home_screen" data-screen="screen-home" onclick="tocNav(this)">Bundles</div>
+  </div>
+  </div><!-- /flow-toc-wrapper -->
+
+  <!-- Phone Frame -->
+  <div class="phone-frame">
+    <div class="phone-btn phone-btn-action"></div>
+    <div class="phone-btn phone-btn-volup"></div>
+    <div class="phone-btn phone-btn-voldown"></div>
+    <div class="phone-btn phone-btn-power"></div>
+    <div class="phone">
+
+  <!-- Screen 0: Auth (Phone) -->
+  <div class="screen active" id="screen-auth" style="padding:20px 0 32px;">
+    <!-- Carousel: top 2/3 -->
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide">
+          <div class="slide-icon">
+    /\
+   /  \
+    |
+    |__________
+    |          \
+    |           |
+    ||         ||
+    ||         ||</div>
+          <div class="slide-title">Allpacko</div>
+          <div class="slide-desc">The family packing app. Build lists together, never forget a thing.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  ___________
+ |  Toiletries |
+ |  Tech       |
+ |  Outfits    |
+ |_____________|</div>
+          <div class="slide-title">Build it once, pack forever</div>
+          <div class="slide-desc">Create reusable packing lists called bundles. Mark them as essentials and they auto-add to every trip.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  Mom [======  ] 80%
+  Dad [====    ] 60%
+  Kid [==      ] 30%</div>
+          <div class="slide-title">Everyone's on the same page</div>
+          <div class="slide-desc">See who's packed, who's not, and who's packing what. Pack for your kids and pets too.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  [x] Passport
+  [x] Charger
+  [ ] Sunscreen
+  [ ] Kindle</div>
+          <div class="slide-title">Leave the stress at home</div>
+          <div class="slide-desc">Check things off as you pack. Everyone sees what's left. Walk out the door knowing nothing's forgotten.</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="carousel-dots">
+        <button class="carousel-arrow hidden" id="carousel-prev" onclick="carouselGo(-1)">&larr;</button>
+        <span class="carousel-dot active" onclick="carouselSetSlide(0,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(1,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(2,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(3,true)"></span>
+        <button class="carousel-arrow" id="carousel-next" onclick="carouselGo(1)">&rarr;</button>
+      </div>
+    </div>
+    <!-- Bottom 1/3: phone sign in -->
+    <div style="padding:0 24px;">
+      <div style="color:#888; font-size:12px; text-align:center; margin-bottom:8px;">Continue with phone number</div>
+      <div class="input-row" style="margin-top:0;">
+        <input class="ascii-input" id="phone-input" type="tel" placeholder="+1 (555) 000-0000" value="" autofocus>
+        <button class="arrow-btn" onclick="goTo('screen-otp')">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 0b: OTP Verification -->
+  <div class="screen" id="screen-otp">
+    <button class="back-btn" onclick="goBack('screen-auth')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Enter your code</div>
+      <div class="subtitle">We sent a 6-digit code to your phone.</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+      </div>
+      <div style="height:16px"></div>
+      <div class="primary-btn" onclick="goTo('screen-name')">Verify</div>
+      <div style="height:12px"></div>
+      <div class="skip-btn" onclick="goTo('screen-otp-resend')">Resend code</div>
+    </div>
+  </div>
+
+  <!-- Screen 0b-err: OTP Wrong Code -->
+  <div class="screen" id="screen-otp-wrong">
+    <button class="back-btn" onclick="goBack('screen-otp')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Enter your code</div>
+      <div class="subtitle">We sent a 6-digit code to your phone.</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="4">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="2">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="0">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="8">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="1">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="7">
+      </div>
+      <div style="height:8px"></div>
+      <div style="color:#f66; font-size:12px; text-align:center;">That code doesn't match. Please try again.</div>
+      <div style="height:12px"></div>
+      <div class="primary-btn" onclick="goTo('screen-name')">Verify</div>
+      <div style="height:12px"></div>
+      <div class="skip-btn" onclick="goTo('screen-otp-resend')">Resend code</div>
+    </div>
+  </div>
+
+  <!-- Screen 0b-resend: OTP Resend -->
+  <div class="screen" id="screen-otp-resend">
+    <button class="back-btn" onclick="goBack('screen-otp')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Enter your code</div>
+      <div class="subtitle">We sent a new code to your phone.</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+      </div>
+      <div style="height:8px"></div>
+      <div style="color:#6f6; font-size:12px; text-align:center;">New code sent!</div>
+      <div style="height:12px"></div>
+      <div class="primary-btn" onclick="goTo('screen-name')">Verify</div>
+      <div style="height:12px"></div>
+      <div style="color:#444; font-size:12px; text-align:center;">Resend available in 30s</div>
+    </div>
+  </div>
+
+  <!-- Screen 0c: Pending Invite (shown when phone has an invite) -->
+  <div class="screen" id="screen-invite">
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">You've been invited!</div>
+      <div class="subtitle">Someone added you to their family on Allpacko.</div>
+      <div style="height:32px"></div>
+      <div style="border:1px solid #555; padding:20px 16px;">
+        <div style="color:#fff; font-size:15px; margin-bottom:6px;">The Royal Tenenbaums</div>
+        <div style="color:#555; font-size:11px;">Invited by Royal Tenenbaum</div>
+      </div>
+      <div style="height:16px"></div>
+      <div class="primary-btn" onclick="goTo('screen-name')">Join family</div>
+      <div style="height:12px"></div>
+      <div class="skip-btn" onclick="goTo('screen-name')">Create my own family instead</div>
+    </div>
+  </div>
+
+  <!-- Screen 1: Name -->
+  <div class="screen" id="screen-name">
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Welcome, traveler</div>
+      <div class="subtitle">What's your name?</div>
+      <div class="input-row">
+        <input class="ascii-input" id="name-input" type="text" placeholder="Your name" value="">
+        <button class="arrow-btn" id="name-arrow" onclick="goTo('screen-walkthrough-intro')">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Walkthrough Intro -->
+  <div class="screen" id="screen-walkthrough-intro">
+    <div class="wt-content">
+      <div class="wt-title" style="font-size:18px; margin-bottom:12px;" id="walkthrough-intro-greeting">Nice to meet you!</div>
+      <div class="wt-body">Let us show you how Allpacko takes the chaos out of family packing — in about 30 seconds.</div>
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-1')">Show me</div>
+      <div class="skip-btn" onclick="goTo('screen-members')">Skip, I'll figure it out</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 1: Bundles -->
+  <div class="screen" id="screen-walkthrough-1">
+    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="wt-content">
+      <div class="slide-icon">
+ ┌─ Toiletries ──────┐
+ │  Shampoo           │
+ │  Toothbrush        │
+ │  Sunscreen         │
+ └────────────────────┘
+ ┌─ Tech ────────────┐
+ │  Charger           │
+ │  Adapter           │
+ │  Headphones        │
+ └────────────────────┘</div>
+      <div class="wt-title">It all starts with bundles</div>
+      <div class="wt-body">A bundle is a reusable packing list — toiletries, tech, outfits. Create it once, and it's ready for every trip.</div>
+    </div>
+    <div class="wt-dots">
+
+      <span class="wt-dot active"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span>
+
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-2')">Next</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 2: Essentials -->
+  <div class="screen" id="screen-walkthrough-2">
+    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="wt-content">
+      <div class="slide-icon">
+  + New Trip: Cancun
+
+  Auto-added:
+  [*] Toiletries
+  [*] Tech essentials
+  [*] Documents
+
+  "3 bundles ready to go"</div>
+      <div class="wt-title">Essentials pack themselves</div>
+      <div class="wt-body">Mark any bundle as essential and it's automatically added to every new trip. Your charger and toiletries? Already there.</div>
+    </div>
+    <div class="wt-dots">
+      <span class="wt-dot"></span><span class="wt-dot active"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span>
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-3')">Next</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 3: Family -->
+  <div class="screen" id="screen-walkthrough-3">
+    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="wt-content">
+      <div class="slide-icon">
+  You        [ORGANIZER]
+  Alex       [PACKER]
+  Sam        [DEPENDENT]
+  ─────────────────────
+  You pack for: Sam
+  Alex packs for: Alex</div>
+      <div class="wt-title">Pack together, not over each other</div>
+      <div class="wt-body">Add your family. Everyone manages their own packing — or you manage it for them. No more "did you pack your...?"</div>
+    </div>
+    <div class="wt-dots">
+      <span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot active"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span>
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-4')">Next</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 4: Progress -->
+  <div class="screen" id="screen-walkthrough-4">
+    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="wt-content">
+      <div class="slide-icon">
+  You   [==========] 100%
+  Alex  [=======   ]  70%
+  Sam   [====      ]  40%
+
+  Trip: 70% packed</div>
+      <div class="wt-title">See who's ready at a glance</div>
+      <div class="wt-body">Track everyone's packing progress in real time. No nagging — just open the app and see where things stand.</div>
+    </div>
+    <div class="wt-dots">
+      <span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot active"></span><span class="wt-dot"></span><span class="wt-dot"></span>
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-5')">Next</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 5: Assign -->
+  <div class="screen" id="screen-walkthrough-5">
+    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="wt-content">
+      <div class="slide-icon">
+  Your packing:
+  [x] Passport
+  [x] Charger
+  [ ] Kindle     → Alex
+  [x] Sunscreen
+  ─────────────────────
+  Alex will check it off</div>
+      <div class="wt-title">Your list, their suitcase</div>
+      <div class="wt-body">Can't pack your Kindle because Alex has it? Assign it to them. It moves to their checklist — and off your plate.</div>
+    </div>
+    <div class="wt-dots">
+      <span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot active"></span><span class="wt-dot"></span>
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-walkthrough-6')">Next</div>
+    </div>
+  </div>
+
+  <!-- Walkthrough 6: All packed -->
+  <div class="screen" id="screen-walkthrough-6">
+    <div class="wt-content">
+      <div class="slide-icon">
+  [x] Passport
+  [x] Charger
+  [x] Sunscreen
+  [x] Kindle
+  [x] Snacks
+  ─────────────────
+  ALL PACKED ✓</div>
+      <div class="wt-title">Never forget anything again</div>
+      <div class="wt-body">Check items off as you pack. When everything's green, you're good to go. Walk out the door stress-free.</div>
+    </div>
+    <div class="wt-dots">
+      <span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot active"></span>
+
+    </div>
+    <div class="wt-actions">
+      <div class="primary-btn" onclick="goTo('screen-members')">Get started</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Create Family -->
+  <div class="screen" id="screen-family">
+    <button class="back-btn" onclick="goBack('screen-name')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Create your family</div>
+      <div class="subtitle">Allpacko is built around families.<br>Create yours to start packing together.</div>
+      <div class="input-row">
+        <input class="ascii-input" id="family-input" type="text" placeholder="e.g. The Royal Tenenbaums" value="">
+        <button class="arrow-btn" onclick="goTo('screen-members')">&#8594;</button>
+      </div>
+    </div>
+    <div style="border:1px solid #444; padding:14px 16px; cursor:pointer; margin:0 0 8px;" onclick="goTo('screen-home')">
+      <div style="color:#888; font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Pending invitation</div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="color:#fff; font-size:13px;">The Royal Tenenbaums</span>
+        <span style="color:#fff; border:1px solid #fff; padding:4px 12px; font-size:11px;">Join</span>
+      </div>
+    </div>
+    <div class="dots">
+      <span class="dot">&#9675;</span>
+      <span class="dot active">&#9679;</span>
+      <span class="dot">&#9675;</span>
+    </div>
+  </div>
+
+  <!-- Screen 3: Invite your family -->
+  <div class="screen" id="screen-members">
+    <button class="back-btn" id="members-back-btn" onclick="goBack('screen-walkthrough-intro')">&larr; back</button>
+    <div class="close-btn" id="members-close-btn" onclick="goTo('screen-home')" style="display:none;">Close</div>
+
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto; justify-content:flex-start;">
+      <div style="height:60px"></div>
+      <div class="title" style="font-size:15px">Add your family</div>
+      <div class="subtitle">So that everyone can pack together, see each other's progress, and nobody forgets a thing.</div>
+
+      <div style="height:16px"></div>
+
+      <!-- Your row (ADMIN, non-editable, visually consistent) -->
+      <div class="member-row" style="opacity:0.6;">
+        <span class="member-name" id="organizer-name">You</span>
+        <span class="member-role admin">ADMIN</span>
+      </div>
+
+      <!-- Added members appear here (below You) -->
+      <div class="member-list" id="member-list"></div>
+
+      <!-- Add buttons — primary actions -->
+      <div id="add-buttons" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+        <button class="primary-btn" onclick="addFromContacts()" style="text-align:left; padding:14px;">+ Add from contacts</button>
+        <button class="primary-btn" onclick="addDependent()" style="text-align:left; padding:14px;">
+          <span style="display:block;">+ Add a dependent</span>
+          <span style="display:block; font-size:11px; opacity:0.5; margin-top:3px; font-weight:normal;">Someone others pack for — a baby, young kid, pet, etc.</span>
+        </button>
+      </div>
+
+      <!-- Spacer to prevent add buttons from being pushed to bottom -->
+      <div style="flex:1;"></div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="primary-btn" id="members-primary-btn" onclick="sendInvites()" style="position:relative; overflow:hidden; display:none;">Invite and Continue</div>
+      <div class="skip-btn" id="members-skip-btn" onclick="goTo('screen-home')">Skip for now</div>
+    </div>
+  </div>
+
+  <!-- Screen 3a: Contacts Permission -->
+  <div class="screen" id="screen-contacts-permission">
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+      <div class="permission-dialog">
+        <div class="permission-title">"Allpacko" Would Like to Access Your Contacts</div>
+        <div class="permission-body">This lets you quickly add family members you want to pack with.</div>
+        <div class="permission-buttons">
+          <button class="permission-btn" onclick="contactsPermission='denied'; goTo('screen-members')">Don't Allow</button>
+          <button class="permission-btn allow" onclick="goTo('screen-contacts-access-level')">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3a2: Contacts Access Level (iOS 18 stage 2) -->
+  <div class="screen" id="screen-contacts-access-level">
+    <button class="back-btn" onclick="goBack('screen-contacts-permission')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+      <div class="permission-dialog">
+        <div class="permission-title">Choose How to Share Contacts</div>
+        <div class="permission-body">"Allpacko" is requesting access to your contacts.</div>
+        <div class="permission-buttons" style="flex-direction:column; gap:0;">
+          <button class="permission-btn allow" onclick="contactsPermission='granted'; goTo('screen-contacts-picker')" style="border-radius:8px 8px 0 0; border-bottom:none;">Allow Full Access</button>
+          <button class="permission-btn allow" onclick="contactsPermission='granted'; goTo('screen-contacts-picker')" style="border-radius:0 0 8px 8px;">Select Contacts…</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3a3: Contacts Denied -->
+  <div class="screen" id="screen-contacts-denied">
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 32px; text-align:center;">
+      <div class="title" style="font-size:18px; margin-bottom:12px;">Contacts Access Denied</div>
+      <div style="color:#888; font-size:14px; line-height:1.5; margin-bottom:32px;">You previously denied contacts access. To add from contacts, open Settings &gt; Allpacko &gt; Contacts and enable access.</div>
+      <button class="primary-btn" onclick="contactsPermission='unset'; goTo('screen-members')" style="width:100%;">Open Settings</button>
+    </div>
+  </div>
+
+  <!-- Screen 3b: Contacts Picker -->
+  <div class="screen" id="screen-contacts-picker" style="padding:40px 0 32px;">
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="padding:0 24px;">
+      <div style="height:30px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Choose a contact</div>
+      <div style="height:12px"></div>
+      <input class="ascii-input" id="contact-search" type="text" placeholder="Search contacts..." oninput="filterContacts()">
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div id="contacts-list" style="flex:1; overflow-y:auto;">
+      <div class="contact-row" onclick="pickContact('Sarah')">
+        <span class="contact-name">Sarah</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Mike')">
+        <span class="contact-name">Mike</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Emma')">
+        <span class="contact-name">Emma</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Dad')">
+        <span class="contact-name">Dad</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3c: Add Dependent -->
+  <div class="screen" id="screen-add-dependent">
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title" style="font-size:15px">Add a dependent</div>
+      <div class="subtitle">Someone you'll pack for — like a child or baby.</div>
+      <div style="height:24px"></div>
+      <div style="padding:0 16px;">
+        <input class="ascii-input" id="dependent-name-input" type="text" placeholder="Name">
+        <div style="height:12px"></div>
+        <div class="primary-btn" onclick="addDependent()">Add</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Home (zero state) -->
+  <div class="screen" id="screen-home" style="padding-bottom:60px">
+
+    <div class="home-header">
+      <div class="home-title" id="home-family-name">Bundles</div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+      <div style="color:#666; font-size:11px; margin-bottom:16px; display:none;" id="home-members-line">You</div>
+
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+        <div class="slide-icon" style="margin-bottom:32px; color:#444;">
+ ┌─ Toiletries ──────┐
+ │                    │
+ └────────────────────┘
+ ┌─ Tech ────────────┐
+ │                    │
+ └────────────────────┘
+ ┌─ Clothes ─────────┐
+ │                    │
+ └────────────────────┘</div>
+        <div style="color:#888; font-size:13px; text-align:center; margin-bottom:6px;">No bundles yet</div>
+        <div style="color:#444; font-size:12px; text-align:center; line-height:1.5; max-width:260px; margin-bottom:24px;">Create your first reusable packing list — pack once, never start from scratch again.</div>
+        <div class="primary-btn" style="width:auto; padding:12px 32px;">Create your first bundle</div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab">Trips</button>
+      <button class="tab active">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+</div>
+</div><!-- /phone-frame -->
+
+  <!-- Comments Panel -->
+  <div class="comments-panel">
+    <div class="comments-header">Comments</div>
+
+    <div class="reviewer-prompt" id="reviewer-prompt">
+      <label>Your name</label>
+      <input type="text" id="reviewer-name-input" placeholder="Enter your name" onkeydown="if(event.key==='Enter')saveReviewerName()">
+    </div>
+
+    <div class="comments-flow-label" id="comments-flow-label">Continue with phone</div>
+
+    <div id="commenting-as" style="display:none; padding:8px 16px; color:#555; font-size:10px;">Commenting as <span id="commenting-as-name" style="color:#888;"></span></div>
+
+    <div class="comments-input-area" id="comments-input-area" style="display:none;">
+      <textarea id="comment-textarea" placeholder="What's working? What isn't?"></textarea>
+      <button class="comment-submit-btn" onclick="submitComment()">Submit</button>
+    </div>
+
+    <div class="comments-list" id="comments-list"></div>
+
+    <div class="comments-sync-bar">
+      <span class="sync-status" id="sync-status">local only</span>
+      <button class="sync-btn" onclick="syncComments()">sync</button>
+    </div>
+  </div>
+
+</div><!-- /review-layout -->
+
+<div class="prototyper-brand" style="color:#444; font-size:11px; font-family:inherit; letter-spacing:1px;">
+  <span style="font-weight:bold;">VALIDATOR 3000</span> <span style="opacity:0.5;">v0.1</span>
+</div>
+
+<script>
+  // =============================================
+  // PROTOTYPE LOGIC (original)
+  // =============================================
+
+  let members = [];
+  let enteredName = '';
+  let contactsPermission = 'unset'; // 'unset' | 'granted' | 'denied'
+
+  function addFromContacts() {
+    if (contactsPermission === 'granted') {
+      goTo('screen-contacts-picker');
+    } else if (contactsPermission === 'denied') {
+      goTo('screen-contacts-denied');
+    } else {
+      goTo('screen-contacts-permission');
+    }
+  }
+
+  // Map screen IDs to their TOC flow keys
+  const SCREEN_TO_FLOW = {
+    'screen-auth': 'sign_in',
+    'screen-otp': 'otp_verify',
+    'screen-otp-wrong': 'otp_wrong',
+    'screen-otp-resend': 'otp_resend',
+    'screen-invite': 'pending_invite',
+    'screen-name': 'enter_name',
+    'screen-walkthrough-intro': 'wt_intro',
+    'screen-walkthrough-1': 'wt_bundles',
+    'screen-walkthrough-2': 'wt_essentials',
+    'screen-walkthrough-3': 'wt_family',
+    'screen-walkthrough-4': 'wt_progress',
+    'screen-walkthrough-5': 'wt_assign',
+    'screen-walkthrough-6': 'wt_ready',
+    'screen-family': 'create_family',
+    'screen-members': 'invite_family',
+    'screen-contacts-permission': 'contacts_permission',
+    'screen-contacts-access-level': 'contacts_access_level',
+    'screen-contacts-denied': 'contacts_denied',
+    'screen-contacts-picker': 'contacts_picker',
+    'screen-add-dependent': 'add_dependent',
+    'screen-home': 'home_screen'
+  };
+
+  function goTo(id) {
+    // Capture name before leaving name screen
+    const nameVal = document.getElementById('name-input').value.trim();
+    if (nameVal) enteredName = nameVal;
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    setTimeout(() => {
+      const input = document.getElementById(id).querySelector('.ascii-input');
+      if (input) input.focus();
+    }, 50);
+
+    if (id === 'screen-walkthrough-intro') {
+      const name = enteredName;
+      if (name) {
+        enteredName = name;
+        document.getElementById('walkthrough-intro-greeting').textContent = 'Nice to meet you, ' + name + '!';
+      }
+    }
+
+    if (id === 'screen-members') {
+      const name = document.getElementById('name-input').value.trim();
+      if (name) {
+        document.getElementById('organizer-name').textContent = name + ' (you)';
+      }
+      renderMembers();
+    }
+
+    if (id === 'screen-contacts-picker') {
+      const searchInput = document.getElementById('contact-search');
+      if (searchInput) { searchInput.value = ''; filterContacts(); }
+    }
+
+    if (id === 'screen-home') {
+      const name = enteredName || 'My';
+      document.getElementById('home-family-name').textContent = 'Bundles';
+      const allNames = [enteredName || 'You', ...members.map(m => m.name)];
+      document.getElementById('home-members-line').textContent = allNames.join(' · ');
+    }
+
+    // Sync TOC + comments to current screen
+    const flow = SCREEN_TO_FLOW[id];
+    if (flow) {
+      activeFlow = flow;
+      document.querySelectorAll('.toc-item, .toc-subitem').forEach(i => i.classList.remove('active'));
+      // Prefer subitem match, fall back to item match
+      const tocSub = document.querySelector(`.toc-subitem[data-flow="${flow}"]`);
+      const tocItem = document.querySelector(`.toc-item[data-flow="${flow}"]`);
+      const tocEl = tocSub || tocItem;
+      if (tocEl) {
+        tocEl.classList.add('active');
+        // Also highlight parent item if this is a subitem
+        if (tocEl.classList.contains('toc-subitem')) {
+          let sib = tocEl.previousElementSibling;
+          while (sib && !sib.classList.contains('toc-item')) sib = sib.previousElementSibling;
+          if (sib) sib.classList.add('active');
+        }
+      }
+      document.getElementById('comments-flow-label').textContent = FLOW_NAMES[flow] || flow;
+      renderComments();
+    }
+  }
+
+  function goBack(id) {
+    goTo(id);
+  }
+
+  function pickContact(name) {
+    members.push({ name, role: 'packer' });
+    goTo('screen-members');
+  }
+
+  function addDependent() {
+    members.push({ name: '', role: 'dependent' });
+    renderMembers();
+    updateMembersButton();
+    // Focus the new empty name input
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('#member-list .member-name-input');
+      const last = inputs[inputs.length - 1];
+      if (last) last.focus();
+    }, 50);
+  }
+
+  function removeMember(index) {
+    members.splice(index, 1);
+    renderMembers();
+  }
+
+  let openRoleDropdown = null;
+
+  function toggleRoleDropdown(index, event) {
+    event.stopPropagation();
+    if (openRoleDropdown === index) {
+      openRoleDropdown = null;
+    } else {
+      openRoleDropdown = index;
+    }
+    renderMembers();
+  }
+
+  function setRole(index, role, event) {
+    event.stopPropagation();
+    members[index].role = role;
+    openRoleDropdown = null;
+    renderMembers();
+  }
+
+  document.addEventListener('click', function() {
+    if (openRoleDropdown !== null) {
+      openRoleDropdown = null;
+      renderMembers();
+    }
+  });
+
+  function memberFocus(index) {
+    const actions = document.getElementById('member-actions-' + index);
+    const doneBtn = document.getElementById('member-done-' + index);
+    if (actions) actions.style.display = 'none';
+    if (doneBtn) doneBtn.style.display = '';
+  }
+
+  function memberBlur(index, input) {
+    const val = input.value.trim();
+    if (val) {
+      members[index].name = val;
+      // Re-render to show role/delete instead of Add button
+      renderMembers();
+    } else if (members[index].name === '') {
+      members.splice(index, 1);
+      renderMembers();
+    } else {
+      input.value = members[index].name;
+      renderMembers();
+    }
+  }
+
+  function renderMembers() {
+    const list = document.getElementById('member-list');
+    if (members.length === 0) {
+      list.innerHTML = '';
+    } else {
+      list.innerHTML = members.map((m, i) => {
+        const roleClass = m.role === 'admin' ? 'admin' : m.role === 'dependent' ? 'dependent' : 'packer';
+        const roleLabel = m.role === 'admin' ? 'ADMIN' : m.role === 'dependent' ? 'DEPENDENT' : 'PACKER';
+        const dropdownOpen = openRoleDropdown === i;
+        const dropdown = dropdownOpen ? `<div class="role-dropdown">
+          <button class="role-dropdown-item${m.role === 'packer' ? ' selected' : ''}" onclick="setRole(${i},'packer',event)">Packer</button>
+          <button class="role-dropdown-item${m.role === 'admin' ? ' selected' : ''}" onclick="setRole(${i},'admin',event)">Admin</button>
+          <button class="role-dropdown-item${m.role === 'dependent' ? ' selected' : ''}" onclick="setRole(${i},'dependent',event)">Dependent</button>
+        </div>` : '';
+        const isNew = m.name === '';
+        return `<div class="member-row">
+          <input class="member-name-input" value="${escapeHtml(m.name)}" placeholder="Name" onfocus="memberFocus(${i})" onblur="memberBlur(${i},this)" onkeydown="if(event.key==='Enter'){this.blur();}">
+          <span class="member-actions" id="member-actions-${i}">
+            <span class="member-role ${roleClass} tappable" onclick="toggleRoleDropdown(${i},event)" style="position:relative;">${roleLabel}${dropdown}</span>
+            <button class="member-delete" onclick="removeMember(${i})">&times;</button>
+          </span>
+          <button class="member-done-btn" id="member-done-${i}" onclick="document.querySelector('#member-list .member-row:nth-child(${i+1}) .member-name-input').blur()" style="display:${isNew ? '' : 'none'};">Add</button>
+        </div>`;
+      }).join('');
+    }
+    updateMembersButton();
+  }
+
+  function updateMembersButton() {
+    const btn = document.getElementById('members-primary-btn');
+    const skipBtn = document.getElementById('members-skip-btn');
+    const backBtn = document.getElementById('members-back-btn');
+    const closeBtn = document.getElementById('members-close-btn');
+    if (!btn) return;
+    const hasAny = members.length > 0;
+    if (hasAny) {
+      btn.textContent = 'Invite and Continue';
+      btn.classList.remove('disabled');
+      btn.style.display = '';
+      if (skipBtn) skipBtn.style.display = 'none';
+      if (backBtn) backBtn.style.display = 'none';
+      if (closeBtn) closeBtn.style.display = '';
+    } else {
+      btn.style.display = 'none';
+      if (skipBtn) skipBtn.style.display = '';
+      if (backBtn) backBtn.style.display = '';
+      if (closeBtn) closeBtn.style.display = 'none';
+    }
+    // Reset button state in case we're coming back after sending
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.pointerEvents = '';
+    btn.onclick = sendInvites;
+  }
+
+  function sendInvites() {
+    if (members.length === 0) return;
+    const btn = document.getElementById('members-primary-btn');
+    if (!btn) return;
+
+    // Disable interactions
+    btn.style.pointerEvents = 'none';
+    btn.textContent = 'Inviting...';
+
+    // Fill animation: background-size from 0% to 100%
+    const isLight = document.body.classList.contains('light');
+    const fillColor = isLight ? '#111' : '#333';
+    btn.style.backgroundImage = 'linear-gradient(to right, ' + fillColor + ', ' + fillColor + ')';
+    btn.style.backgroundRepeat = 'no-repeat';
+    btn.style.backgroundSize = '0% 100%';
+    btn.style.color = '#fff';
+    btn.offsetHeight; // force reflow
+    btn.style.transition = 'background-size 1.5s ease-out';
+    btn.style.backgroundSize = '100% 100%';
+
+    // After fill completes, show Success then auto-navigate
+    setTimeout(() => {
+      btn.textContent = 'Success';
+      setTimeout(() => { goTo('screen-home'); }, 800);
+    }, 1700);
+  }
+
+  function filterContacts() {
+    const q = document.getElementById('contact-search').value.toLowerCase();
+    const rows = document.querySelectorAll('#contacts-list .contact-row');
+    rows.forEach(row => {
+      const name = row.querySelector('.contact-name').textContent.toLowerCase();
+      row.style.display = name.includes(q) ? '' : 'none';
+    });
+  }
+
+  // Carousel
+  let carouselCurrent = 0;
+  const carouselTotal = 4;
+  let carouselTimer = null;
+  let carouselAutoStopped = false;
+
+  const SLIDE_FLOWS = ['slide_allpacko', 'slide_bundles', 'slide_family', 'slide_checklist'];
+
+  function carouselSetSlide(n, userAction) {
+    carouselCurrent = n;
+    document.getElementById('carousel-track').style.transform = 'translateX(-' + (carouselCurrent * 100) + '%)';
+    const dots = document.querySelectorAll('.carousel-dot');
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === carouselCurrent);
+      if (i === carouselCurrent) {
+        d.style.animation = 'none';
+        d.offsetHeight;
+        d.style.animation = carouselAutoStopped ? 'none' : '';
+      }
+    });
+    document.getElementById('carousel-prev').classList.toggle('hidden', carouselCurrent === 0);
+
+    if (userAction) {
+      carouselAutoStopped = true;
+      if (carouselTimer) clearInterval(carouselTimer);
+      dots[carouselCurrent].style.animation = 'none';
+      dots[carouselCurrent].style.background = document.body.classList.contains('light') ? '#333' : '#fff';
+    }
+
+    // Sync TOC sub-item to current slide
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen && activeScreen.id === 'screen-auth') {
+      const flow = SLIDE_FLOWS[carouselCurrent];
+      if (flow) {
+        activeFlow = flow;
+        document.querySelectorAll('.toc-item, .toc-subitem').forEach(i => i.classList.remove('active'));
+        const subEl = document.querySelector(`.toc-subitem[data-flow="${flow}"]`);
+        if (subEl) subEl.classList.add('active');
+        // Keep parent highlighted too
+        const parentEl = document.querySelector('.toc-item[data-flow="sign_in"]');
+        if (parentEl) parentEl.classList.add('active');
+        document.getElementById('comments-flow-label').textContent = FLOW_NAMES[flow] || flow;
+        renderComments();
+      }
+    }
+  }
+
+  function carouselGo(dir) {
+    let next = carouselCurrent + dir;
+    if (next >= carouselTotal) next = 0;
+    if (next < 0) next = carouselTotal - 1;
+    carouselSetSlide(next, true);
+  }
+
+  carouselTimer = setInterval(() => {
+    if (carouselAutoStopped) { clearInterval(carouselTimer); return; }
+    carouselSetSlide((carouselCurrent + 1) % carouselTotal, false);
+  }, 5000);
+
+
+  // =============================================
+  // DESIGN REVIEW: TOC + COMMENTS
+  // =============================================
+
+  // --- State ---
+  let activeFlow = 'sign_in';
+  let reviewerName = localStorage.getItem('allpacko_reviewer') || '';
+  // v2: clear old test comments
+  if (localStorage.getItem('allpacko_comments_v') !== '2') {
+    localStorage.removeItem('allpacko_comments');
+    localStorage.setItem('allpacko_comments_v', '2');
+  }
+  let allComments = JSON.parse(localStorage.getItem('allpacko_comments') || '{}');
+
+  // jsonbin.io config — replace BIN_ID with your actual bin to enable shared comments
+  const JSONBIN_ID = null; // e.g. '665a1b2c3d4e5f6a7b8c9d0e'
+  const JSONBIN_API = 'https://api.jsonbin.io/v3/b/';
+
+  // Flow display names
+  const FLOW_NAMES = {
+    sign_in: 'Continue with phone',
+    slide_allpacko: 'Allpacko',
+    slide_bundles: 'Build it once',
+    slide_family: 'Same page',
+    slide_checklist: 'Leave stress',
+    otp_verify: 'OTP verification',
+    otp_wrong: 'Wrong code',
+    otp_resend: 'Resend code',
+    pending_invite: 'Pending invite',
+    enter_name: "What's your name?",
+    wt_intro: 'Nice to meet you',
+    wt_walkthrough: 'Walkthrough',
+    wt_bundles: 'Walkthrough: Bundles',
+    wt_essentials: 'Walkthrough: Essentials',
+    wt_family: 'Walkthrough: Family',
+    wt_progress: 'Walkthrough: Progress',
+    wt_assign: 'Walkthrough: Assign',
+    wt_ready: 'Walkthrough: All packed',
+    invite_family: 'Add your family',
+    contacts_permission: 'Contacts: initial prompt',
+    contacts_access_level: 'Contacts: access level',
+    contacts_denied: 'Contacts: denied',
+    contacts_picker: 'Contact picker (full access)',
+    add_dependent: 'Add dependent',
+    home_screen: 'Home screen'
+  };
+
+  // --- Reviewer name ---
+  function showReviewerUI() {
+    document.getElementById('reviewer-prompt').style.display = 'none';
+    document.getElementById('comments-input-area').style.display = 'block';
+    document.getElementById('commenting-as').style.display = 'block';
+    document.getElementById('commenting-as-name').textContent = reviewerName;
+  }
+
+  function initReviewer() {
+    if (reviewerName) showReviewerUI();
+  }
+
+  function saveReviewerName() {
+    const input = document.getElementById('reviewer-name-input');
+    const name = input.value.trim();
+    if (!name) return;
+    reviewerName = name;
+    localStorage.setItem('allpacko_reviewer', name);
+    showReviewerUI();
+  }
+
+  // --- TOC navigation ---
+  function tocNav(el) {
+    const flow = el.dataset.flow;
+    const screen = el.dataset.screen;
+    const slide = el.dataset.slide;
+
+    // Update active TOC item/subitem
+    document.querySelectorAll('.toc-item, .toc-subitem').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    // If clicking a subitem, also highlight parent item
+    if (el.classList.contains('toc-subitem')) {
+      let sib = el;
+      while (sib && !sib.classList.contains('toc-item')) sib = sib.previousElementSibling;
+      if (sib) sib.classList.add('active');
+    }
+    // If clicking a parent with children, also highlight first subitem
+    if (el.classList.contains('has-children')) {
+      const firstSub = el.nextElementSibling;
+      if (firstSub && firstSub.classList.contains('toc-subitem')) firstSub.classList.add('active');
+    }
+
+    // Navigate phone
+    activeFlow = flow;
+    goTo(screen);
+
+    // Navigate carousel if slide specified
+    if (slide !== undefined) {
+      carouselSetSlide(parseInt(slide), true);
+    }
+
+    // Update comments panel
+    document.getElementById('comments-flow-label').textContent = FLOW_NAMES[flow] || flow;
+    renderComments();
+  }
+
+  // --- Comments ---
+  function getFlowComments() {
+    return allComments[activeFlow] || [];
+  }
+
+  function submitComment() {
+    const textarea = document.getElementById('comment-textarea');
+    const text = textarea.value.trim();
+    if (!text) return;
+
+    if (!allComments[activeFlow]) allComments[activeFlow] = [];
+
+    allComments[activeFlow].push({
+      name: reviewerName,
+      text: text,
+      timestamp: Date.now()
+    });
+
+    localStorage.setItem('allpacko_comments', JSON.stringify(allComments));
+    textarea.value = '';
+    renderComments();
+  }
+
+  function renderComments() {
+    const list = document.getElementById('comments-list');
+    const comments = getFlowComments();
+
+    if (comments.length === 0) {
+      list.innerHTML = '<div class="comments-status">No comments yet</div>';
+    } else {
+      const sorted = [...comments].reverse();
+      list.innerHTML = sorted.map(c => {
+        const date = new Date(c.timestamp);
+        const timeStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          + ' ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        return `<div class="comment-item">
+          <div class="comment-meta">
+            <span class="comment-name">${escapeHtml(c.name)}</span>
+            <span class="comment-time">${timeStr}</span>
+          </div>
+          <div class="comment-text">${escapeHtml(c.text)}</div>
+        </div>`;
+      }).join('');
+    }
+
+    updateTocBadges();
+  }
+
+  function updateTocBadges() {
+    document.querySelectorAll('.toc-item, .toc-subitem').forEach(el => {
+      const flow = el.dataset.flow;
+      const count = (allComments[flow] || []).length;
+      let badge = el.querySelector('.toc-comment-count');
+      if (count > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'toc-comment-count';
+          el.appendChild(badge);
+        }
+        badge.textContent = '(' + count + ')';
+      } else if (badge) {
+        badge.remove();
+      }
+    });
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  // --- jsonbin.io sync ---
+  async function syncComments() {
+    const statusEl = document.getElementById('sync-status');
+
+    if (!JSONBIN_ID) {
+      statusEl.textContent = 'no bin configured';
+      setTimeout(() => { statusEl.textContent = 'local only'; }, 2000);
+      return;
+    }
+
+    statusEl.textContent = 'syncing...';
+
+    try {
+      // Pull remote
+      const res = await fetch(JSONBIN_API + JSONBIN_ID + '/latest', {
+        headers: { 'X-Master-Key': '$2a$10$placeholder' }
+      });
+      const data = await res.json();
+      const remote = data.record || {};
+
+      // Merge: combine all comments, deduplicate by timestamp+name
+      for (const flow in remote) {
+        if (!allComments[flow]) allComments[flow] = [];
+        const existing = new Set(allComments[flow].map(c => c.timestamp + '|' + c.name));
+        for (const c of remote[flow]) {
+          if (!existing.has(c.timestamp + '|' + c.name)) {
+            allComments[flow].push(c);
+          }
+        }
+      }
+
+      // Push merged
+      await fetch(JSONBIN_API + JSONBIN_ID, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': '$2a$10$placeholder'
+        },
+        body: JSON.stringify(allComments)
+      });
+
+      localStorage.setItem('allpacko_comments', JSON.stringify(allComments));
+      renderComments();
+      statusEl.textContent = 'synced';
+    } catch (e) {
+      statusEl.textContent = 'sync failed';
+      console.error('Sync error:', e);
+    }
+  }
+
+  // Ctrl+Enter to submit comment
+  document.getElementById('comment-textarea').addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      submitComment();
+    }
+  });
+
+  // --- Themes ---
+  const THEMES = ['cloud', 'sky', 'sage', 'lavender', 'sand', 'rose', 'dark'];
+
+  function cycleTheme() {
+    const current = localStorage.getItem('allpacko_theme') || 'cloud';
+    const idx = THEMES.indexOf(current);
+    const next = THEMES[(idx + 1) % THEMES.length];
+    applyTheme(next);
+    localStorage.setItem('allpacko_theme', next);
+  }
+
+  function applyTheme(theme) {
+    // Remove all theme classes
+    document.body.classList.remove('light', ...THEMES.map(t => 'theme-' + t));
+    if (theme === 'dark') {
+      // no classes
+    } else {
+      document.body.classList.add('light');
+      if (theme !== 'cloud') {
+        document.body.classList.add('theme-' + theme);
+      }
+    }
+    document.getElementById('mode-toggle').textContent = 'Theme: ' + theme;
+  }
+
+  // --- Keyboard navigation ---
+  document.addEventListener('keydown', function(e) {
+    // Don't intercept if typing in the comments panel
+    const tag = e.target.tagName;
+    const inComments = e.target.closest('.comments-panel') || e.target.closest('.reviewer-prompt');
+    if (inComments) return;
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const activeScreen = document.querySelector('.screen.active');
+      if (!activeScreen) return;
+
+      // Click the primary action: arrow-btn or primary-btn
+      const btn = activeScreen.querySelector('.arrow-btn') || activeScreen.querySelector('.primary-btn');
+      if (btn) btn.click();
+    }
+  });
+
+  // --- Init ---
+  applyTheme(localStorage.getItem('allpacko_theme') || 'sky');
+  initReviewer();
+  renderComments();
+</script>
+
+</body>
+</html>
