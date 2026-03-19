@@ -211,6 +211,7 @@
     color: #555;
     font-size: 10px;
     margin-left: 4px;
+    display: none;
   }
   .light .toc-comment-count { color: #aaa; }
 
@@ -228,8 +229,8 @@
     position: fixed;
     top: 50%;
     left: calc(50% + 260px);
-    display: none;
     transform: translateY(-50%);
+    display: none;
   }
 
   .comments-header {
@@ -1526,13 +1527,14 @@
   <div class="flow-toc-wrapper">
   <div class="flow-panel">
     <div class="flow-panel-title">User Flows</div>
-    <div class="flow-item active">Sign up</div>
-    <div class="flow-subitem active">New user</div>
-    <div class="flow-subitem" style="opacity:0.4; cursor:default;">Invited user <span style="font-size:9px; border:1px solid; padding:0 4px; margin-left:4px; border-radius:3px;">WIP</span></div>
+    <div class="flow-item active" id="flow-section-signup">Sign up</div>
+    <div class="flow-subitem active" id="flow-new" onclick="switchFlow('new')">New user</div>
+    <div class="flow-subitem" id="flow-invited" onclick="switchFlow('invited')">Invited user</div>
   </div>
   <div class="toc-panel">
     <div class="toc-title">Table of Contents</div>
 
+    <div id="toc-new-user">
     <div class="toc-section">Sign in / Sign up</div>
     <div class="toc-item has-children active" data-flow="sign_in" data-screen="screen-auth" data-slide="0" onclick="tocNav(this)">Continue with phone</div>
     <div class="toc-subitem active" data-flow="slide_allpacko" data-screen="screen-auth" data-slide="0" onclick="tocNav(this)">Allpacko</div>
@@ -1567,6 +1569,61 @@
     <div class="toc-section">Home</div>
     <div class="toc-item has-children" data-flow="home_screen" data-screen="screen-home" onclick="tocNav(this)">Zero state</div>
     <div class="toc-subitem" data-flow="home_screen" data-screen="screen-home" onclick="tocNav(this)">Bundles</div>
+    </div>
+
+    <div id="toc-invited-user" style="display:none;">
+    <div class="toc-section">Receive invite</div>
+    <div class="toc-item" data-flow="inv_lockscreen" data-screen="screen-inv-lockscreen" onclick="tocNav(this)">Lock screen</div>
+    <div class="toc-item" data-flow="inv_imessage" data-screen="screen-inv-imessage" onclick="tocNav(this)">iMessage</div>
+    <div class="toc-item" data-flow="inv_appstore" data-screen="screen-inv-appstore" onclick="tocNav(this)">App Store</div>
+
+    <div class="toc-section">Sign in</div>
+    <div class="toc-item" data-flow="inv_auth" data-screen="screen-inv-auth" onclick="tocNav(this)">Continue with phone</div>
+    <div class="toc-item" data-flow="inv_otp" data-screen="screen-inv-otp" onclick="tocNav(this)">OTP</div>
+
+    <div class="toc-section">Onboarding</div>
+    <div class="toc-item" data-flow="inv_invite" data-screen="screen-inv-invite" onclick="tocNav(this)">Invitation</div>
+    <div class="toc-item" data-flow="inv_name" data-screen="screen-inv-name" onclick="tocNav(this)">Your name</div>
+    <div class="toc-item has-children" data-flow="wt_intro" data-screen="screen-walkthrough-intro" onclick="tocNav(this)">Walkthrough</div>
+    <div class="toc-subitem" data-flow="wt_bundles" data-screen="screen-walkthrough-1" onclick="tocNav(this)">Bundles</div>
+    <div class="toc-subitem" data-flow="wt_essentials" data-screen="screen-walkthrough-2" onclick="tocNav(this)">Essentials</div>
+    <div class="toc-subitem" data-flow="wt_family" data-screen="screen-walkthrough-3" onclick="tocNav(this)">Family</div>
+    <div class="toc-subitem" data-flow="wt_progress" data-screen="screen-walkthrough-4" onclick="tocNav(this)">Progress</div>
+    <div class="toc-subitem" data-flow="wt_assign" data-screen="screen-walkthrough-5" onclick="tocNav(this)">Assign</div>
+    <div class="toc-subitem" data-flow="wt_ready" data-screen="screen-walkthrough-6" onclick="tocNav(this)">All packed</div>
+
+    <div class="toc-section">Home</div>
+    <div class="toc-item" data-flow="inv_home" data-screen="screen-inv-home" onclick="tocNav(this)">Zero state</div>
+    </div>
+
+    <div id="toc-bundle" style="display:none;">
+    <div class="toc-section">Bundle</div>
+    <div class="toc-item" data-flow="bundle_home" data-screen="screen-bundle-home" onclick="tocNav(this)">Bundles (empty)</div>
+    <div class="toc-item" data-flow="bundle_create" data-screen="screen-bundle-create" onclick="tocNav(this)">Create bundle</div>
+    <div class="toc-item" data-flow="bundle_saved" data-screen="screen-bundle-saved" onclick="tocNav(this)">Bundle saved</div>
+    <div class="toc-item" data-flow="bundle_create_2" data-screen="screen-bundle-create-2" onclick="tocNav(this)">Create another</div>
+    <div class="toc-item" data-flow="bundle_list" data-screen="screen-bundle-list" onclick="tocNav(this)">Bundles list</div>
+    </div>
+
+    <div id="toc-trip" style="display:none;">
+    <div class="toc-section">Trip</div>
+    <div class="toc-item" data-flow="trip_home" data-screen="screen-trip-home" onclick="tocNav(this)">Trips (empty)</div>
+    <div class="toc-item" data-flow="trip_wizard" data-screen="screen-trip-wizard" onclick="tocNav(this)">Trip details</div>
+    <div class="toc-item" data-flow="trip_bundles" data-screen="screen-trip-bundles" onclick="tocNav(this)">Assign bundles</div>
+    <div class="toc-item" data-flow="trip_confirm" data-screen="screen-trip-confirm" onclick="tocNav(this)">Trip created</div>
+    <div class="toc-item" data-flow="trip_review" data-screen="screen-trip-review" onclick="tocNav(this)">Review items</div>
+    <div class="toc-item" data-flow="trip_list" data-screen="screen-trip-list" onclick="tocNav(this)">Trips list</div>
+    </div>
+
+    <div id="toc-packing" style="display:none;">
+    <div class="toc-section">Packing</div>
+    <div class="toc-item" data-flow="pack_detail" data-screen="screen-pack-detail" onclick="tocNav(this)">Trip detail</div>
+    <div class="toc-item" data-flow="pack_progress" data-screen="screen-pack-progress" onclick="tocNav(this)">Mid-packing</div>
+    <div class="toc-item" data-flow="pack_family" data-screen="screen-pack-family" onclick="tocNav(this)">Family progress</div>
+    <div class="toc-item" data-flow="pack_done" data-screen="screen-pack-done" onclick="tocNav(this)">All packed!</div>
+    <div class="toc-item" data-flow="pack_trips" data-screen="screen-pack-trips" onclick="tocNav(this)">Trips (packed)</div>
+    </div>
+
   </div>
   </div><!-- /flow-toc-wrapper -->
 
@@ -1760,13 +1817,13 @@
     </div>
     <div class="wt-actions">
       <div class="primary-btn" onclick="goTo('screen-walkthrough-1')">Show me</div>
-      <div class="skip-btn" onclick="goTo('screen-members')">Skip, I'll figure it out</div>
+      <div class="skip-btn" onclick="walkthroughFinish()">Skip, I'll figure it out</div>
     </div>
   </div>
 
   <!-- Walkthrough 1: Bundles -->
   <div class="screen" id="screen-walkthrough-1">
-    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="close-btn" onclick="walkthroughFinish()">Close</div>
     <div class="wt-content">
       <div class="slide-icon">
  ┌─ Toiletries ──────┐
@@ -1794,7 +1851,7 @@
 
   <!-- Walkthrough 2: Essentials -->
   <div class="screen" id="screen-walkthrough-2">
-    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="close-btn" onclick="walkthroughFinish()">Close</div>
     <div class="wt-content">
       <div class="slide-icon">
   + New Trip: Cancun
@@ -1818,7 +1875,7 @@
 
   <!-- Walkthrough 3: Family -->
   <div class="screen" id="screen-walkthrough-3">
-    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="close-btn" onclick="walkthroughFinish()">Close</div>
     <div class="wt-content">
       <div class="slide-icon">
   You        [ORGANIZER]
@@ -1840,7 +1897,7 @@
 
   <!-- Walkthrough 4: Progress -->
   <div class="screen" id="screen-walkthrough-4">
-    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="close-btn" onclick="walkthroughFinish()">Close</div>
     <div class="wt-content">
       <div class="slide-icon">
   You   [==========] 100%
@@ -1861,7 +1918,7 @@
 
   <!-- Walkthrough 5: Assign -->
   <div class="screen" id="screen-walkthrough-5">
-    <div class="close-btn" onclick="goTo('screen-members')">Close</div>
+    <div class="close-btn" onclick="walkthroughFinish()">Close</div>
     <div class="wt-content">
       <div class="slide-icon">
   Your packing:
@@ -1901,7 +1958,7 @@
 
     </div>
     <div class="wt-actions">
-      <div class="primary-btn" onclick="goTo('screen-members')">Get started</div>
+      <div class="primary-btn" onclick="walkthroughFinish()">Get started</div>
     </div>
   </div>
 
@@ -2094,6 +2151,729 @@
       <button class="tab">Family</button>
     </div>
   </div>
+
+  <!-- ========================================= -->
+  <!-- INVITED USER FLOW -->
+  <!-- ========================================= -->
+
+  <!-- Inv 1: Lock Screen -->
+  <div class="screen" id="screen-inv-lockscreen" style="padding:0; cursor:pointer;" onclick="goTo('screen-inv-imessage')">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div class="title" style="font-size:48px; font-weight:200; font-family:inherit; letter-spacing:-2px;">9:41</div>
+      <div style="color:#888; font-size:12px; margin-top:4px;">Wednesday, March 18</div>
+    </div>
+    <div style="margin:0 16px 80px; border:1px solid #555; border-radius:16px; padding:14px 16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span class="label">Messages</span>
+        <span style="color:#888; font-size:10px;">now</span>
+      </div>
+      <div class="title" style="font-size:12px; text-align:left; font-weight:bold; margin-bottom:4px;">+1 (212) 555-0147</div>
+      <div style="font-size:11px; line-height:1.4;">Lauren invited you to pack together on Allpacko — the family packing app. Download it here: allpacko.app/invite/abc123</div>
+    </div>
+  </div>
+
+  <!-- Inv 2: iMessage -->
+  <div class="screen" id="screen-inv-imessage" style="padding:0;">
+    <button class="back-btn" onclick="goBack('screen-inv-lockscreen')" style="top:50px;">&larr; back</button>
+    <div style="padding:50px 16px 10px; border-bottom:1px solid #555; text-align:center;">
+      <div class="title" style="font-size:13px;">+1 (212) 555-0147</div>
+      <div style="color:#888; font-size:10px; margin-top:2px;">iMessage</div>
+    </div>
+    <div style="flex:1; padding:16px; display:flex; flex-direction:column; justify-content:flex-end;">
+      <div style="align-self:flex-start; max-width:80%; border:1px solid #555; border-radius:16px 16px 16px 4px; padding:10px 14px;">
+        <div style="font-size:12px; line-height:1.5;">Lauren invited you to pack together on Allpacko — the family packing app. Download it here: <span style="color:#4af; cursor:pointer; text-decoration:underline;" onclick="event.stopPropagation(); goTo('screen-inv-appstore')">allpacko.app/invite/abc123</span></div>
+      </div>
+    </div>
+    <div style="padding:8px 16px 32px; border-top:1px solid #555;">
+      <div style="border:1px solid #555; border-radius:20px; padding:10px 16px; color:#888; font-size:12px;">iMessage</div>
+    </div>
+  </div>
+
+  <!-- Inv 3: App Store -->
+  <div class="screen" id="screen-inv-appstore" style="padding:0;">
+    <button class="back-btn" onclick="goBack('screen-inv-imessage')" style="top:50px;">&larr; back</button>
+    <div style="padding:50px 20px 12px; border-bottom:1px solid #555;">
+      <div class="label">App Store</div>
+    </div>
+    <div style="padding:20px; display:flex; gap:16px; align-items:center; border-bottom:1px solid #555;">
+      <div style="width:64px; height:64px; border:1px solid #555; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <div style="font-size:10px; white-space:pre; line-height:1.2; text-align:center;">/\
+/  \
+ ||
+ ||</div>
+      </div>
+      <div style="flex:1;">
+        <div class="title" style="font-size:15px; text-align:left;">Allpacko</div>
+        <div style="color:#888; font-size:11px; margin-top:2px;">Family packing, sorted</div>
+        <div style="color:#888; font-size:10px; margin-top:4px;">★★★★★ 4.9</div>
+      </div>
+      <div id="appstore-get-btn" style="border:1px solid #4af; border-radius:16px; padding:6px 18px; color:#4af; font-size:12px; font-family:inherit; cursor:pointer;" onclick="appStoreGet()">GET</div>
+    </div>
+    <div style="padding:20px;">
+      <div class="title" style="font-size:13px; text-align:left; margin-bottom:8px;">What's New</div>
+      <div style="font-size:11px; line-height:1.5;">Build reusable packing lists, pack as a family, and never forget a thing. Track everyone's progress in real time.</div>
+      <div style="border-top:1px solid #555; margin-top:16px; padding-top:16px;">
+        <div class="title" style="font-size:13px; text-align:left; margin-bottom:12px;">Preview</div>
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1; height:200px; border:1px solid #555; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:10px; white-space:pre; line-height:1.3; text-align:center;">┌────────┐
+│ Bundle │
+│  List  │
+└────────┘</div>
+          </div>
+          <div style="flex:1; height:200px; border:1px solid #555; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:10px; white-space:pre; line-height:1.3; text-align:center;">┌────────┐
+│ Family │
+│  View  │
+└────────┘</div>
+          </div>
+          <div style="flex:1; height:200px; border:1px solid #555; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:10px; white-space:pre; line-height:1.3; text-align:center;">┌────────┐
+│  Trip  │
+│  Pack  │
+└────────┘</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inv 4: Auth (simplified — static first slide + phone input) -->
+  <div class="screen" id="screen-inv-auth" style="padding:20px 0 32px;">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-bottom:1px solid #222; margin-bottom:16px;">
+      <div class="slide-icon" style="margin-bottom:24px;">
+    /\
+   /  \
+    |
+    |__________
+    |          \
+    |           |
+    ||         ||
+    ||         ||</div>
+      <div class="slide-title">Allpacko</div>
+      <div class="slide-desc" style="margin-bottom:48px;">The family packing app. Build lists together, never forget a thing.</div>
+    </div>
+    <div style="padding:0 24px;">
+      <div style="color:#888; font-size:12px; text-align:center; margin-bottom:8px;">Continue with phone number</div>
+      <div class="input-row" style="margin-top:0;">
+        <input class="ascii-input" id="inv-phone-input" type="tel" placeholder="+1 (555) 000-0000" value="">
+        <button class="arrow-btn" onclick="goTo('screen-inv-otp')">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inv 5: OTP -->
+  <div class="screen" id="screen-inv-otp">
+    <button class="back-btn" onclick="goBack('screen-inv-auth')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Enter your code</div>
+      <div class="subtitle">We sent a 6-digit code to your phone.</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0;" maxlength="1" value="">
+      </div>
+      <div style="height:16px"></div>
+      <div class="primary-btn" onclick="goTo('screen-inv-invite')">Verify</div>
+      <div style="height:12px"></div>
+      <div class="skip-btn">Resend code</div>
+    </div>
+  </div>
+
+  <!-- Inv 6: Name -->
+  <div class="screen" id="screen-inv-name">
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Welcome, traveler</div>
+      <div class="subtitle">What's your name?</div>
+      <div class="input-row">
+        <input class="ascii-input" id="inv-name-input" type="text" placeholder="Your name" value="">
+        <button class="arrow-btn" onclick="goTo('screen-walkthrough-intro')">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inv 7: Invitation -->
+  <div class="screen" id="screen-inv-invite">
+    <div class="close-btn" onclick="goTo('screen-inv-home')">Close</div>
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">You've been invited!</div>
+      <div class="subtitle">Lauren invited you to pack together on Allpacko.</div>
+      <div style="height:24px"></div>
+      <div style="border:1px solid #555; border-radius:12px; padding:20px 16px;">
+        <div style="color:#888; font-size:11px;">Invited by Lauren</div>
+        <div style="color:#555; font-size:11px; margin-top:4px;">2 members · 1 trip planned</div>
+      </div>
+      <div style="height:24px"></div>
+      <div class="primary-btn" onclick="goTo('screen-inv-name')">Join family</div>
+    </div>
+    <div style="padding-bottom:16px;">
+      <div class="skip-btn" onclick="switchFlow('new')">Create my own family instead</div>
+    </div>
+  </div>
+
+  <!-- Inv 8: Home (invited variant) -->
+  <div class="screen" id="screen-inv-home" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Bundles</div>
+    </div>
+    <div style="color:#666; font-size:11px; margin-bottom:16px;">Lauren · <span id="inv-home-member-name">You</span></div>
+    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+        <div class="slide-icon" style="margin-bottom:32px; color:#444;">
+ ┌─ Toiletries ──────┐
+ │                    │
+ └────────────────────┘
+ ┌─ Tech ────────────┐
+ │                    │
+ └────────────────────┘
+ ┌─ Clothes ─────────┐
+ │                    │
+ └────────────────────┘</div>
+        <div style="color:#888; font-size:13px; text-align:center; margin-bottom:6px;">No bundles yet</div>
+        <div style="color:#444; font-size:12px; text-align:center; line-height:1.5; max-width:260px;">Create your first reusable packing list — pack once, never start from scratch again.</div>
+        <div style="height:16px"></div>
+        <div class="primary-btn" style="width:auto; padding:12px 32px;">Create your first bundle</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab">Trips</button>
+      <button class="tab active">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- BUNDLE FLOW -->
+  <!-- ========================================= -->
+
+  <!-- Bundle: Home (empty) -->
+  <div class="screen" id="screen-bundle-home" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Bundles</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+        <div class="slide-icon" style="margin-bottom:32px; color:#444;">
+ ┌─────────────────────┐
+ │                     │
+ └─────────────────────┘
+ ┌─────────────────────┐
+ │                     │
+ └─────────────────────┘
+ ┌─────────────────────┐
+ │                     │
+ └─────────────────────┘</div>
+        <div style="color:#888; font-size:13px; text-align:center; margin-bottom:6px;">No bundles yet</div>
+        <div style="color:#444; font-size:12px; text-align:center; line-height:1.5; max-width:260px; margin-bottom:24px;">Create your first reusable packing list — pack once, never start from scratch again.</div>
+        <div class="primary-btn" onclick="goTo('screen-bundle-create')" style="width:auto; padding:12px 32px;">Create your first bundle</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab">Trips</button>
+      <button class="tab active">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
+  <!-- Bundle: Create -->
+  <div class="screen" id="screen-bundle-create">
+    <button class="back-btn" onclick="goBack('screen-bundle-home')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Create a bundle</div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Icon</div>
+      <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎒</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👟</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #fff; border-radius:6px; background:#222; cursor:pointer;">🧴</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📱</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏖</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📄</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧸</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎮</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📷</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">💊</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧳</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🍼</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">☀️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">❄️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎿</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">✈️</span>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Name</div>
+      <input class="ascii-input" type="text" value="Toiletries" readonly>
+      <div style="height:12px"></div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; color:#aaa; font-size:12px; cursor:pointer;">
+        <span style="width:18px; height:18px; border:1px solid #fff; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; color:#fff;">x</span>
+        <span>Essential — Auto-add to every trip</span>
+      </div>
+      <div style="height:12px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Items</div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input class="ascii-input" type="text" placeholder="Add an item..." style="flex:1;" readonly>
+        <button class="arrow-btn" style="width:36px;">+</button>
+      </div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Toothbrush</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Toothpaste</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Sunscreen</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Shampoo</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Deodorant</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Razor</span><span style="color:#555; cursor:pointer;">×</span></div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-bundle-saved')">Save bundle</div>
+    </div>
+  </div>
+
+  <!-- Bundle: Saved -->
+  <div class="screen" id="screen-bundle-saved">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div style="border:1px solid #555; border-radius:12px; padding:24px 32px; text-align:center;">
+        <div style="font-size:36px; margin-bottom:12px;">🧴</div>
+        <div style="color:#fff; font-size:16px; margin-bottom:4px;">Toiletries</div>
+        <div style="color:#666; font-size:12px; margin-bottom:12px;">6 items</div>
+        <div style="color:#6f6; font-size:13px; margin-bottom:4px;">Bundle created!</div>
+        <div style="color:#888; font-size:11px;">[*] Marked as essential</div>
+      </div>
+    </div>
+    <div style="padding:0 0 16px; display:flex; flex-direction:column; gap:8px;">
+      <div class="primary-btn" onclick="goTo('screen-bundle-list')">Done</div>
+      <div class="skip-btn" onclick="goTo('screen-bundle-create-2')">Create another bundle</div>
+    </div>
+  </div>
+
+  <!-- Bundle: Create another (Tech) -->
+  <div class="screen" id="screen-bundle-create-2">
+    <button class="back-btn" onclick="goBack('screen-bundle-saved')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Create a bundle</div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Icon</div>
+      <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎒</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👟</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧴</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #fff; border-radius:6px; background:#222; cursor:pointer;">📱</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏖</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📄</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧸</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎮</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📷</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">💊</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧳</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🍼</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">☀️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">❄️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎿</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">✈️</span>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Name</div>
+      <input class="ascii-input" type="text" value="Tech" readonly>
+      <div style="height:12px"></div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; color:#aaa; font-size:12px; cursor:pointer;">
+        <span style="width:18px; height:18px; border:1px solid #fff; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; color:#fff;">x</span>
+        <span>Essential — Auto-add to every trip</span>
+      </div>
+      <div style="height:12px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Items</div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input class="ascii-input" type="text" placeholder="Add an item..." style="flex:1;" readonly>
+        <button class="arrow-btn" style="width:36px;">+</button>
+      </div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Phone charger</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Kindle</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Headphones</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Camera</span><span style="color:#555; cursor:pointer;">×</span></div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-bundle-list')">Save bundle</div>
+    </div>
+  </div>
+
+  <!-- Bundle: List (populated) -->
+  <div class="screen" id="screen-bundle-list" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Bundles</div>
+    </div>
+    <div style="flex:1; overflow-y:auto;">
+      <div style="border:1px solid #444; border-radius:8px; padding:12px 14px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="color:#fff; font-size:14px;">🧴 Toiletries</div>
+          <span style="color:#6f6; font-size:10px; text-transform:uppercase; letter-spacing:1px;">ESSENTIAL</span>
+        </div>
+        <div style="color:#666; font-size:11px; margin-top:4px;">6 items</div>
+      </div>
+      <div style="border:1px solid #444; border-radius:8px; padding:12px 14px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="color:#fff; font-size:14px;">📱 Tech</div>
+          <span style="color:#6f6; font-size:10px; text-transform:uppercase; letter-spacing:1px;">ESSENTIAL</span>
+        </div>
+        <div style="color:#666; font-size:11px; margin-top:4px;">4 items</div>
+      </div>
+      <div style="height:8px"></div>
+      <button class="new-trip-btn">+ Create new bundle</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab">Trips</button>
+      <button class="tab active">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- TRIP FLOW -->
+  <!-- ========================================= -->
+
+  <!-- Trip: Home (empty) -->
+  <div class="screen" id="screen-trip-home" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Trips</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+        <div class="slide-icon" style="margin-bottom:32px; color:#444;">
+      /\      /\
+     /  \    /  \
+    /    \  /    \
+   /      \/      \
+  /                \
+ /    /\      /\    \
+/____/  \____/  \____\
+~~~~~~~~~~~~~~~~~~~~~~~~~</div>
+        <div style="color:#888; font-size:13px; text-align:center; margin-bottom:6px;">No trips yet</div>
+        <div style="color:#444; font-size:12px; text-align:center; line-height:1.5; max-width:260px; margin-bottom:24px;">Create a trip to start packing with your family.</div>
+        <div class="primary-btn" onclick="goTo('screen-trip-wizard')" style="width:auto; padding:12px 32px;">Create a trip</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active">Trips</button>
+      <button class="tab">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
+  <!-- Trip: Wizard -->
+  <div class="screen" id="screen-trip-wizard">
+    <button class="back-btn" onclick="goBack('screen-trip-home')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">New trip</div>
+      <div style="height:20px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Where are you going?</div>
+      <input class="ascii-input" type="text" value="Cayman Islands" readonly>
+      <div style="height:16px"></div>
+      <div style="display:flex; gap:12px;">
+        <div style="flex:1;">
+          <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Leaving</div>
+          <input class="ascii-input" type="text" value="Jun 14, 2026" readonly style="font-size:12px;">
+        </div>
+        <div style="flex:1;">
+          <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Returning</div>
+          <input class="ascii-input" type="text" value="Jun 21, 2026" readonly style="font-size:12px;">
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Who's coming?</div>
+      <div style="display:flex; flex-direction:column;">
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;"><span style="color:#fff;">✓</span> <span style="flex:1;">Royal</span><span style="color:#555; font-size:10px;">ORGANIZER</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;"><span style="color:#fff;">✓</span> <span style="flex:1;">Chas</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;"><span style="color:#fff;">✓</span> <span style="flex:1;">Margot</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#555; font-size:13px;"><span style="color:#333;">○</span> <span style="flex:1;">Etheline</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#555; font-size:13px;"><span style="color:#333;">○</span> <span style="flex:1;">Richie</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;"><span style="color:#fff;">✓</span> <span style="flex:1;">Ari</span><span style="color:#555; font-size:10px;">DEPENDENT</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 0; color:#ccc; font-size:13px;"><span style="color:#fff;">✓</span> <span style="flex:1;">Uzi</span><span style="color:#555; font-size:10px;">DEPENDENT</span></div>
+      </div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-trip-bundles')">Next →</div>
+    </div>
+  </div>
+
+  <!-- Trip: Assign bundles -->
+  <div class="screen" id="screen-trip-bundles">
+    <button class="back-btn" onclick="goBack('screen-trip-wizard')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Assign bundles</div>
+      <div class="subtitle" style="text-align:left; margin-top:4px;">Choose which bundles each traveler needs.</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin:16px 0;">
+        <span style="padding:6px 12px; border:1px solid #fff; border-radius:16px; font-size:11px; color:#fff;">Royal*</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Chas</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Margot</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Ari</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Uzi</span>
+      </div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Royal's bundles</div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;">
+        <span style="color:#fff;">✓</span>
+        <span style="flex:1;">🧴 Toiletries</span>
+        <span style="color:#6f6; font-size:10px;">ESSENTIAL</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;">
+        <span style="color:#fff;">✓</span>
+        <span style="flex:1;">📱 Tech</span>
+        <span style="color:#6f6; font-size:10px;">ESSENTIAL</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #222; color:#ccc; font-size:13px;">
+        <span style="color:#fff;">✓</span>
+        <span style="flex:1;">🏖 Beach gear</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 0; color:#ccc; font-size:13px;">
+        <span style="color:#fff;">✓</span>
+        <span style="flex:1;">📄 Documents</span>
+        <span style="color:#6f6; font-size:10px;">ESSENTIAL</span>
+      </div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-trip-confirm')">Looks good!</div>
+    </div>
+  </div>
+
+  <!-- Trip: Confirmed -->
+  <div class="screen" id="screen-trip-confirm">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div style="border:1px solid #555; border-radius:12px; padding:24px 20px; width:100%;">
+        <div style="color:#fff; font-size:16px; margin-bottom:8px;">Cayman Islands</div>
+        <div style="color:#666; font-size:12px; margin-bottom:12px;">Jun 14 – 21, 2026</div>
+        <div style="border-top:1px solid #333; padding-top:12px;">
+          <div style="color:#888; font-size:11px; margin-bottom:6px;">Travelers</div>
+          <div style="color:#ccc; font-size:12px; line-height:1.6;">Royal · Chas · Margot · Ari · Uzi</div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#6f6; font-size:14px;">Trip added! ✓</div>
+    </div>
+    <div style="padding:0 0 16px; display:flex; flex-direction:column; gap:8px;">
+      <div class="primary-btn" onclick="goTo('screen-trip-review')">Start packing</div>
+      <div class="skip-btn" onclick="goTo('screen-trip-list')">Later</div>
+    </div>
+  </div>
+
+  <!-- Trip: Review items -->
+  <div class="screen" id="screen-trip-review">
+    <button class="back-btn" onclick="goBack('screen-trip-confirm')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Review items</div>
+      <div class="subtitle" style="text-align:left; margin-top:4px;">Check everyone's packing list before you start.</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin:16px 0;">
+        <span style="padding:6px 12px; border:1px solid #fff; border-radius:16px; font-size:11px; color:#fff;">Royal</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Chas</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Margot</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Ari</span>
+        <span style="padding:6px 12px; border:1px solid #444; border-radius:16px; font-size:11px; color:#888;">Uzi</span>
+      </div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin:8px 0 6px;">🧴 Toiletries</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Toothbrush</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Toothpaste</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Sunscreen</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Shampoo</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Deodorant</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Razor</div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin:12px 0 6px;">📱 Tech</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Phone charger</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Kindle</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Headphones</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Camera</div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-trip-list')">Looks good!</div>
+    </div>
+  </div>
+
+  <!-- Trip: List (populated) -->
+  <div class="screen" id="screen-trip-list" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Trips</div>
+    </div>
+    <div style="flex:1; overflow-y:auto;">
+      <div class="trip-card">
+        <div class="trip-header">
+          <div class="trip-dest">Cayman Islands</div>
+          <div class="trip-progress">0%</div>
+        </div>
+        <div class="trip-dates">Jun 14 – 21, 2026</div>
+        <div class="trip-avatars">Royal · Chas · Margot · Ari · Uzi</div>
+      </div>
+      <div style="height:8px"></div>
+      <button class="new-trip-btn">+ Create a trip</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active">Trips</button>
+      <button class="tab">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- PACKING FLOW -->
+  <!-- ========================================= -->
+
+  <!-- Packing: Trip detail -->
+  <div class="screen" id="screen-pack-detail">
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="border:1px solid #555; border-radius:12px; padding:16px; margin-bottom:16px;">
+        <div style="color:#fff; font-size:16px;">Cayman Islands</div>
+        <div style="color:#666; font-size:12px; margin-top:4px;">Jun 14 – 21, 2026</div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+        <span style="padding:6px 10px; border:1px solid #fff; border-radius:16px; font-size:10px; color:#fff;">Royal 0/10</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Chas 0/10</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Margot 0/6</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Ari 0/6</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Uzi 0/6</span>
+      </div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">🧴 Toiletries</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px; cursor:pointer;" onclick="goTo('screen-pack-progress')">[ ] Toothbrush</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Toothpaste</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Sunscreen</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Shampoo</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Deodorant</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Razor</div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin:12px 0 6px;">📱 Tech</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Phone charger</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Kindle</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Headphones</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Camera</div>
+    </div>
+    <div style="margin:12px 0; color:#888; font-size:12px;">
+      <div style="font-family:inherit;">[                    ] 0% packed</div>
+    </div>
+  </div>
+
+  <!-- Packing: Mid-packing 60% -->
+  <div class="screen" id="screen-pack-progress">
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="border:1px solid #555; border-radius:12px; padding:16px; margin-bottom:16px;">
+        <div style="color:#fff; font-size:16px;">Cayman Islands</div>
+        <div style="color:#666; font-size:12px; margin-top:4px;">Jun 14 – 21, 2026</div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+        <span style="padding:6px 10px; border:1px solid #fff; border-radius:16px; font-size:10px; color:#fff;">Royal 6/10</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Chas 3/10</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Margot 2/6</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Ari 4/6</span>
+        <span style="padding:6px 10px; border:1px solid #444; border-radius:16px; font-size:10px; color:#888;">Uzi 4/6</span>
+      </div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">🧴 Toiletries</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Toothbrush</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Toothpaste</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Sunscreen</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Shampoo</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Deodorant</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Razor</div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin:12px 0 6px;">📱 Tech</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Phone charger</div>
+      <div style="padding:5px 0; color:#666; font-size:13px; text-decoration:line-through;">[x] Kindle</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Headphones</div>
+      <div style="padding:5px 0; color:#aaa; font-size:13px;">[ ] Camera</div>
+    </div>
+    <div style="margin:8px 0; color:#888; font-size:12px;">
+      <div style="font-family:inherit;">[============        ] 60% packed</div>
+    </div>
+    <div style="padding:4px 0 8px;">
+      <div class="skip-btn" onclick="goTo('screen-pack-family')">See everyone's progress</div>
+    </div>
+  </div>
+
+  <!-- Packing: Family progress -->
+  <div class="screen" id="screen-pack-family">
+    <button class="back-btn" onclick="goBack('screen-pack-progress')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Family progress</div>
+      <div class="subtitle" style="text-align:left; margin-top:4px;">Cayman Islands · Jun 14 – 21</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; font-size:12px; color:#aaa;">
+        <span style="width:60px; text-align:right;">Royal</span>
+        <span style="flex:1; color:#6f6; font-family:inherit;">[==========] 100%  ✓</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; font-size:12px; color:#aaa;">
+        <span style="width:60px; text-align:right;">Chas</span>
+        <span style="flex:1; color:#888; font-family:inherit;">[=======   ]  70%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; font-size:12px; color:#aaa;">
+        <span style="width:60px; text-align:right;">Margot</span>
+        <span style="flex:1; color:#888; font-family:inherit;">[====      ]  40%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; font-size:12px; color:#aaa;">
+        <span style="width:60px; text-align:right;">Ari</span>
+        <span style="flex:1; color:#888; font-family:inherit;">[========  ]  80%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; font-size:12px; color:#aaa;">
+        <span style="width:60px; text-align:right;">Uzi</span>
+        <span style="flex:1; color:#888; font-family:inherit;">[========  ]  80%</span>
+      </div>
+      <div style="height:16px"></div>
+      <div style="border-top:1px solid #333; padding-top:12px; color:#fff; font-size:13px; text-align:center;">Trip overall: 74% packed</div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Remaining</div>
+      <div style="padding:4px 0; color:#aaa; font-size:12px;">Chas: Headphones, Camera, Deodorant</div>
+      <div style="padding:4px 0; color:#aaa; font-size:12px;">Margot: Shampoo, Razor, Camera</div>
+      <div style="padding:4px 0; color:#aaa; font-size:12px;">Ari: Sunscreen, Razor</div>
+      <div style="padding:4px 0; color:#aaa; font-size:12px;">Uzi: Deodorant, Razor</div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-pack-done')">Keep packing</div>
+    </div>
+  </div>
+
+  <!-- Packing: All packed! -->
+  <div class="screen" id="screen-pack-done">
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div style="border:1px solid #555; border-radius:12px; padding:24px 20px; text-align:center; width:100%;">
+        <div style="color:#6f6; font-size:13px; margin-bottom:8px; font-family:inherit;">[==========] 100%</div>
+        <div style="color:#fff; font-size:18px; margin-bottom:8px;">ALL PACKED ✓</div>
+        <div style="color:#888; font-size:13px; margin-bottom:12px;">Cayman Islands</div>
+        <div style="border-top:1px solid #333; padding-top:12px; color:#ccc; font-size:12px; line-height:2;">
+          Royal ✓  Chas ✓  Margot ✓  Ari ✓  Uzi ✓
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#666; font-size:12px; text-align:center; line-height:1.5; max-width:260px;">Nothing left behind. Have an amazing trip!</div>
+    </div>
+    <div style="padding:0 0 16px;">
+      <div class="primary-btn" onclick="goTo('screen-pack-trips')">Back to trips</div>
+    </div>
+  </div>
+
+  <!-- Packing: Trips (packed) -->
+  <div class="screen" id="screen-pack-trips" style="padding-bottom:60px">
+    <div class="home-header">
+      <div class="home-title">Trips</div>
+    </div>
+    <div style="flex:1; overflow-y:auto;">
+      <div class="trip-card">
+        <div class="trip-header">
+          <div class="trip-dest">Cayman Islands</div>
+          <div class="trip-progress">100% ✓</div>
+        </div>
+        <div class="trip-dates">Jun 14 – 21, 2026</div>
+        <div class="trip-avatars">Royal ✓ · Chas ✓ · Margot ✓ · Ari ✓ · Uzi ✓</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active">Trips</button>
+      <button class="tab">Bundles</button>
+      <button class="tab">Family</button>
+    </div>
+  </div>
+
 </div>
 </div><!-- /phone-frame -->
 
@@ -2137,6 +2917,7 @@
   let members = [];
   let enteredName = '';
   let contactsPermission = 'unset'; // 'unset' | 'granted' | 'denied'
+  let walkthroughSource = 'new'; // 'new' or 'invited'
 
   function addFromContacts() {
     if (contactsPermission === 'granted') {
@@ -2170,13 +2951,40 @@
     'screen-contacts-denied': 'contacts_denied',
     'screen-contacts-picker': 'contacts_picker',
     'screen-add-dependent': 'add_dependent',
-    'screen-home': 'home_screen'
+    'screen-home': 'home_screen',
+    'screen-inv-lockscreen': 'inv_lockscreen',
+    'screen-inv-imessage': 'inv_imessage',
+    'screen-inv-appstore': 'inv_appstore',
+    'screen-inv-auth': 'inv_auth',
+    'screen-inv-otp': 'inv_otp',
+    'screen-inv-name': 'inv_name',
+    'screen-inv-invite': 'inv_invite',
+    'screen-inv-joined': 'inv_joined',
+    'screen-inv-home': 'inv_home',
+    'screen-bundle-home': 'bundle_home',
+    'screen-bundle-create': 'bundle_create',
+    'screen-bundle-saved': 'bundle_saved',
+    'screen-bundle-create-2': 'bundle_create_2',
+    'screen-bundle-list': 'bundle_list',
+    'screen-trip-home': 'trip_home',
+    'screen-trip-wizard': 'trip_wizard',
+    'screen-trip-bundles': 'trip_bundles',
+    'screen-trip-confirm': 'trip_confirm',
+    'screen-trip-review': 'trip_review',
+    'screen-trip-list': 'trip_list',
+    'screen-pack-detail': 'pack_detail',
+    'screen-pack-progress': 'pack_progress',
+    'screen-pack-family': 'pack_family',
+    'screen-pack-done': 'pack_done',
+    'screen-pack-trips': 'pack_trips'
   };
 
   function goTo(id) {
     // Capture name before leaving name screen
     const nameVal = document.getElementById('name-input').value.trim();
     if (nameVal) enteredName = nameVal;
+    const invNameEl = document.getElementById('inv-name-input');
+    if (invNameEl) { const v = invNameEl.value.trim(); if (v) enteredName = v; }
 
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -2212,6 +3020,11 @@
       document.getElementById('home-family-name').textContent = 'Bundles';
       const allNames = [enteredName || 'You', ...members.map(m => m.name)];
       document.getElementById('home-members-line').textContent = allNames.join(' · ');
+    }
+
+    if (id === 'screen-inv-home') {
+      const name = enteredName || 'You';
+      document.getElementById('inv-home-member-name').textContent = name;
     }
 
     // Sync TOC + comments to current screen
@@ -2506,7 +3319,32 @@
     contacts_denied: 'Contacts: denied',
     contacts_picker: 'Contact picker (full access)',
     add_dependent: 'Add dependent',
-    home_screen: 'Home screen'
+    home_screen: 'Home screen',
+    inv_lockscreen: 'Lock screen',
+    inv_imessage: 'iMessage',
+    inv_appstore: 'App Store',
+    inv_auth: 'Continue with phone',
+    inv_otp: 'OTP',
+    inv_name: 'Your name',
+    inv_invite: 'Invitation',
+    inv_joined: 'Joined',
+    inv_home: 'Home',
+    bundle_home: 'Bundles (empty)',
+    bundle_create: 'Create bundle',
+    bundle_saved: 'Bundle saved',
+    bundle_create_2: 'Create another',
+    bundle_list: 'Bundles list',
+    trip_home: 'Trips (empty)',
+    trip_wizard: 'Trip details',
+    trip_bundles: 'Assign bundles',
+    trip_confirm: 'Trip created',
+    trip_review: 'Review items',
+    trip_list: 'Trips list',
+    pack_detail: 'Trip detail',
+    pack_progress: 'Mid-packing',
+    pack_family: 'Family progress',
+    pack_done: 'All packed!',
+    pack_trips: 'Trips (packed)'
   };
 
   // --- Reviewer name ---
@@ -2624,7 +3462,7 @@
           badge.className = 'toc-comment-count';
           el.appendChild(badge);
         }
-        badge.textContent = '(' + count + ')';
+        badge.textContent = '\uD83D\uDCAC ' + count;
       } else if (badge) {
         badge.remove();
       }
@@ -2736,6 +3574,47 @@
       if (btn) btn.click();
     }
   });
+
+  // --- Flow switching (config-driven) ---
+  const FLOW_CONFIG = {
+    'new':     { toc: 'toc-new-user',     first: 'screen-auth',           section: 'flow-section-signup' },
+    'invited': { toc: 'toc-invited-user',  first: 'screen-inv-lockscreen', section: 'flow-section-signup' },
+    'bundle':  { toc: 'toc-bundle',        first: 'screen-bundle-home',    section: 'flow-section-core' },
+    'trip':    { toc: 'toc-trip',           first: 'screen-trip-home',      section: 'flow-section-core' },
+    'packing': { toc: 'toc-packing',       first: 'screen-pack-detail',    section: 'flow-section-core' },
+  };
+
+  function switchFlow(flow) {
+    // Hide all TOC sections, deactivate all flow subitems and section headers
+    Object.values(FLOW_CONFIG).forEach(c => document.getElementById(c.toc).style.display = 'none');
+    document.querySelectorAll('.flow-subitem').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.flow-item').forEach(el => el.classList.remove('active'));
+    // Show selected TOC and activate flow item + parent section
+    const cfg = FLOW_CONFIG[flow];
+    document.getElementById(cfg.toc).style.display = '';
+    const flowEl = document.getElementById('flow-' + flow);
+    if (flowEl) flowEl.classList.add('active');
+    const sectionEl = document.getElementById(cfg.section);
+    if (sectionEl) sectionEl.classList.add('active');
+    // Set walkthrough routing based on flow
+    if (flow === 'invited') walkthroughSource = 'invited';
+    else if (flow === 'new') walkthroughSource = 'new';
+    goTo(cfg.first);
+  }
+
+  function walkthroughFinish() {
+    if (walkthroughSource === 'invited') {
+      goTo('screen-inv-home');
+    } else {
+      goTo('screen-members');
+    }
+  }
+
+  function appStoreGet() {
+    const btn = document.getElementById('appstore-get-btn');
+    btn.textContent = 'OPEN';
+    btn.onclick = function() { goTo('screen-inv-auth'); };
+  }
 
   // --- Init ---
   applyTheme(localStorage.getItem('allpacko_theme') || 'sky');
