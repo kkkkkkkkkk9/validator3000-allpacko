@@ -211,7 +211,6 @@
     color: #555;
     font-size: 10px;
     margin-left: 4px;
-    display: none;
   }
   .light .toc-comment-count { color: #aaa; }
 
@@ -230,7 +229,6 @@
     top: 50%;
     left: calc(50% + 260px);
     transform: translateY(-50%);
-    display: none;
   }
 
   .comments-header {
@@ -1519,6 +1517,30 @@
 </head>
 <body>
 
+<!-- Password Gate -->
+<div id="password-gate" style="position:fixed; inset:0; z-index:9999; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-family:'SF Mono','Menlo','Monaco','Courier New',monospace; color:#333;">
+  <div style="text-align:center;">
+    <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; opacity:0.5;">Validator 3000</div>
+    <input id="pw-input" type="password" placeholder="Password" autofocus
+      style="background:#fff; border:1px solid #ccc; border-radius:8px; padding:12px 16px; font-family:inherit; font-size:14px; width:220px; text-align:center; outline:none; color:#333;"
+      onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-error" style="margin-top:12px; font-size:11px; color:#f66; display:none;">Wrong password</div>
+  </div>
+</div>
+<script>
+  function checkPw() {
+    if (document.getElementById('pw-input').value === 'allpacko') {
+      document.getElementById('password-gate').style.display = 'none';
+      sessionStorage.setItem('v3k_auth', '1');
+    } else {
+      document.getElementById('pw-error').style.display = '';
+    }
+  }
+  if (sessionStorage.getItem('v3k_auth') === '1') {
+    document.getElementById('password-gate').style.display = 'none';
+  }
+</script>
+
 <button class="mode-toggle" onclick="cycleTheme()" id="mode-toggle">Theme: sky</button>
 
 <div class="review-layout">
@@ -2025,6 +2047,7 @@
 
     <div class="bottom-section">
       <div class="primary-btn" id="members-primary-btn" onclick="sendInvites()" style="position:relative; overflow:hidden; display:none;">Invite and Continue</div>
+      <div class="skip-btn" id="members-add-only-btn" onclick="goTo('screen-home')" style="display:none;">Add without inviting</div>
       <div class="skip-btn" id="members-skip-btn" onclick="goTo('screen-home')">Skip for now</div>
     </div>
   </div>
@@ -3155,6 +3178,7 @@
   function updateMembersButton() {
     const btn = document.getElementById('members-primary-btn');
     const skipBtn = document.getElementById('members-skip-btn');
+    const addOnlyBtn = document.getElementById('members-add-only-btn');
     const backBtn = document.getElementById('members-back-btn');
     const closeBtn = document.getElementById('members-close-btn');
     if (!btn) return;
@@ -3163,11 +3187,13 @@
       btn.textContent = 'Invite and Continue';
       btn.classList.remove('disabled');
       btn.style.display = '';
+      if (addOnlyBtn) addOnlyBtn.style.display = '';
       if (skipBtn) skipBtn.style.display = 'none';
       if (backBtn) backBtn.style.display = 'none';
       if (closeBtn) closeBtn.style.display = '';
     } else {
       btn.style.display = 'none';
+      if (addOnlyBtn) addOnlyBtn.style.display = 'none';
       if (skipBtn) skipBtn.style.display = '';
       if (backBtn) backBtn.style.display = '';
       if (closeBtn) closeBtn.style.display = 'none';
