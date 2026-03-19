@@ -79,22 +79,7 @@ export default async function AppHomePage() {
             <a
               key={product.id}
               href={`/app/products/${product.slug}`}
-              style={{
-                border: "1px solid #333",
-                borderRadius: "10px",
-                padding: "20px",
-                display: "block",
-                textDecoration: "none",
-                transition: "border-color 0.1s",
-              }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.borderColor =
-                  "#555")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.borderColor =
-                  "#333")
-              }
+              className="block border border-border rounded-[10px] p-5 no-underline transition-colors hover:border-secondary"
             >
               <div
                 style={{
