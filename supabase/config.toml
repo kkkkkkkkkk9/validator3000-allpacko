@@ -1,5 +1,6 @@
-[project]
-id = "gnrcfritpuismshocsdh"
+# For detailed configuration reference documentation, visit:
+# https://supabase.com/docs/guides/local-development/cli/config
+project_id = "validator3000"
 
 [api]
 enabled = true

@@ -38,19 +38,6 @@ CREATE TRIGGER profiles_touch_updated_at
   BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION touch_updated_at();
 
--- Profiles: users can read profiles of anyone in their org, and update their own
-CREATE POLICY profiles_select_self_or_org ON profiles FOR SELECT USING (
-  auth.uid() = id
-  OR EXISTS (
-    SELECT 1 FROM organization_members self_om
-    JOIN organization_members other_om ON other_om.organization_id = self_om.organization_id
-    WHERE self_om.user_id = auth.uid() AND other_om.user_id = profiles.id
-  )
-);
-
-CREATE POLICY profiles_insert_self ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
-CREATE POLICY profiles_update_self ON profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
-
 -- =============================================================================
 -- Table: organizations
 -- =============================================================================
@@ -84,6 +71,7 @@ ALTER TABLE organization_members ENABLE ROW LEVEL SECURITY;
 
 -- =============================================================================
 -- RLS helper: is_org_member
+-- (must come after organization_members table creation)
 -- =============================================================================
 CREATE OR REPLACE FUNCTION is_org_member(org_id uuid)
 RETURNS boolean AS $$
@@ -92,6 +80,22 @@ RETURNS boolean AS $$
     WHERE organization_id = org_id AND user_id = auth.uid()
   );
 $$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
+
+-- =============================================================================
+-- RLS Policies: profiles
+-- (must come after organization_members for the cross-org SELECT policy)
+-- =============================================================================
+CREATE POLICY profiles_select_self_or_org ON profiles FOR SELECT USING (
+  auth.uid() = id
+  OR EXISTS (
+    SELECT 1 FROM organization_members self_om
+    JOIN organization_members other_om ON other_om.organization_id = self_om.organization_id
+    WHERE self_om.user_id = auth.uid() AND other_om.user_id = profiles.id
+  )
+);
+
+CREATE POLICY profiles_insert_self ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY profiles_update_self ON profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 
 -- =============================================================================
 -- RLS Policies: organizations
