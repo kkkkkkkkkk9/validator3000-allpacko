@@ -32,13 +32,15 @@ export default async function AppLayout({
     <div className="min-h-dvh flex flex-col">
       <nav className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-primary">Validator 3000</span>
+          <a href="/app" className="text-sm font-semibold text-primary hover:opacity-80">Validator 3000</a>
           {org?.name ? (
             <>
               <span className="text-muted">/</span>
               <span className="text-sm text-secondary">{org.name}</span>
             </>
           ) : null}
+          <span className="text-muted">/</span>
+          <a href="/app/products" className="text-sm text-tertiary hover:text-secondary">Products</a>
         </div>
         <div className="text-xs text-tertiary">
           {user.email}
