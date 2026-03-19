@@ -1,0 +1,12 @@
+    <button class="back-btn" onclick="goBack('screen-contacts-permission')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+      <div class="permission-dialog">
+        <div class="permission-title">Choose How to Share Contacts</div>
+        <div class="permission-body">"Allpacko" is requesting access to your contacts.</div>
+        <div class="permission-buttons" style="flex-direction:column; gap:0;">
+          <button class="permission-btn allow" onclick="contactsPermission='granted'; goTo('screen-contacts-picker')" style="border-radius:8px 8px 0 0; border-bottom:none;">Allow Full Access</button>
+          <button class="permission-btn allow" onclick="contactsPermission='granted'; goTo('screen-contacts-picker')" style="border-radius:0 0 8px 8px;">Select Contacts…</button>
+        </div>
+      </div>
+    </div>

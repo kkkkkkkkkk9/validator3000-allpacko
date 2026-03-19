@@ -1,0 +1,22 @@
+    <button class="back-btn" onclick="goBack('screen-otp')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Enter your code</div>
+      <div class="subtitle">We sent a 6-digit code to your phone.</div>
+      <div style="height:24px"></div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="4">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="2">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="0">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="8">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="1">
+        <input class="ascii-input" style="width:40px; text-align:center; font-size:18px; padding:12px 0; border-color:#f66; color:#f66;" maxlength="1" value="7">
+      </div>
+      <div style="height:8px"></div>
+      <div style="color:#f66; font-size:12px; text-align:center;">That code doesn't match. Please try again.</div>
+      <div style="height:12px"></div>
+      <div class="primary-btn" onclick="goTo('screen-name')">Verify</div>
+      <div style="height:12px"></div>
+      <div class="skip-btn" onclick="goTo('screen-otp-resend')">Resend code</div>
+    </div>

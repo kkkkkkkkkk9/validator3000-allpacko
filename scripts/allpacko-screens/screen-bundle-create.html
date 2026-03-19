@@ -1,0 +1,50 @@
+    <button class="back-btn" onclick="goBack('screen-bundle-home')">&larr; back</button>
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="height:50px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Create a bundle</div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Icon</div>
+      <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎒</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">👟</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #fff; border-radius:6px; background:#222; cursor:pointer;">🧴</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📱</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏖</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📄</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧸</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎮</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">📷</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">💊</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🧳</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🍼</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">☀️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">❄️</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🎿</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">🏕</span>
+        <span style="text-align:center; font-size:18px; padding:6px 0; border:1px solid #333; border-radius:6px; cursor:pointer;">✈️</span>
+      </div>
+      <div style="height:16px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Name</div>
+      <input class="ascii-input" type="text" value="Toiletries" readonly>
+      <div style="height:12px"></div>
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; color:#aaa; font-size:12px; cursor:pointer;">
+        <span style="width:18px; height:18px; border:1px solid #fff; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; color:#fff;">x</span>
+        <span>Essential — Auto-add to every trip</span>
+      </div>
+      <div style="height:12px"></div>
+      <div style="color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Items</div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <input class="ascii-input" type="text" placeholder="Add an item..." style="flex:1;" readonly>
+        <button class="arrow-btn" style="width:36px;">+</button>
+      </div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Toothbrush</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Toothpaste</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Sunscreen</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Shampoo</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="border-bottom:1px solid #222; padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Deodorant</span><span style="color:#555; cursor:pointer;">×</span></div>
+      <div style="padding:8px 0; display:flex; justify-content:space-between; color:#ccc; font-size:13px;"><span>Razor</span><span style="color:#555; cursor:pointer;">×</span></div>
+    </div>
+    <div style="padding-top:12px;">
+      <div class="primary-btn" onclick="goTo('screen-bundle-saved')">Save bundle</div>
+    </div>

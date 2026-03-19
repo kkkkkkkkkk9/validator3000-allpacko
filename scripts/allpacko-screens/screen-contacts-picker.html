@@ -1,0 +1,25 @@
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="padding:0 24px;">
+      <div style="height:30px"></div>
+      <div class="title" style="font-size:15px; text-align:left;">Choose a contact</div>
+      <div style="height:12px"></div>
+      <input class="ascii-input" id="contact-search" type="text" placeholder="Search contacts..." oninput="filterContacts()">
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div id="contacts-list" style="flex:1; overflow-y:auto;">
+      <div class="contact-row" onclick="pickContact('Sarah')">
+        <span class="contact-name">Sarah</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Mike')">
+        <span class="contact-name">Mike</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Emma')">
+        <span class="contact-name">Emma</span>
+      </div>
+      <div class="contact-row" onclick="pickContact('Dad')">
+        <span class="contact-name">Dad</span>
+      </div>
+    </div>

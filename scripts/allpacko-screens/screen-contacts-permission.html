@@ -1,0 +1,12 @@
+    <button class="back-btn" onclick="goBack('screen-members')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+      <div class="permission-dialog">
+        <div class="permission-title">"Allpacko" Would Like to Access Your Contacts</div>
+        <div class="permission-body">This lets you quickly add family members you want to pack with.</div>
+        <div class="permission-buttons">
+          <button class="permission-btn" onclick="contactsPermission='denied'; goTo('screen-members')">Don't Allow</button>
+          <button class="permission-btn allow" onclick="goTo('screen-contacts-access-level')">Continue</button>
+        </div>
+      </div>
+    </div>

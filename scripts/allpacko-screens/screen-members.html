@@ -1,0 +1,37 @@
+    <button class="back-btn" id="members-back-btn" onclick="goBack('screen-walkthrough-intro')">&larr; back</button>
+    <div class="close-btn" id="members-close-btn" onclick="goTo('screen-home')" style="display:none;">Close</div>
+
+    <div style="flex:1; display:flex; flex-direction:column; overflow-y:auto; justify-content:flex-start;">
+      <div style="height:60px"></div>
+      <div class="title" style="font-size:15px">Add your family</div>
+      <div class="subtitle">So that everyone can pack together, see each other's progress, and nobody forgets a thing.</div>
+
+      <div style="height:16px"></div>
+
+      <!-- Your row (ADMIN, non-editable, visually consistent) -->
+      <div class="member-row" style="opacity:0.6;">
+        <span class="member-name" id="organizer-name">You</span>
+        <span class="member-role admin">ADMIN</span>
+      </div>
+
+      <!-- Added members appear here (below You) -->
+      <div class="member-list" id="member-list"></div>
+
+      <!-- Add buttons — primary actions -->
+      <div id="add-buttons" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+        <button class="primary-btn" onclick="addFromContacts()" style="text-align:left; padding:14px;">+ Add from contacts</button>
+        <button class="primary-btn" onclick="addDependent()" style="text-align:left; padding:14px;">
+          <span style="display:block;">+ Add a dependent</span>
+          <span style="display:block; font-size:11px; opacity:0.5; margin-top:3px; font-weight:normal;">Someone others pack for — a baby, young kid, pet, etc.</span>
+        </button>
+      </div>
+
+      <!-- Spacer to prevent add buttons from being pushed to bottom -->
+      <div style="flex:1;"></div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="primary-btn" id="members-primary-btn" onclick="sendInvites()" style="position:relative; overflow:hidden; display:none;">Invite and Continue</div>
+      <div class="skip-btn" id="members-add-only-btn" onclick="goTo('screen-home')" style="display:none;">Add without inviting</div>
+      <div class="skip-btn" id="members-skip-btn" onclick="goTo('screen-home')">Skip for now</div>
+    </div>

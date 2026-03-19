@@ -1,0 +1,23 @@
+    <button class="back-btn" onclick="goBack('screen-name')">&larr; back</button>
+
+    <div style="flex:1; display:flex; flex-direction:column;">
+      <div style="height:60px"></div>
+      <div class="title">Create your family</div>
+      <div class="subtitle">Allpacko is built around families.<br>Create yours to start packing together.</div>
+      <div class="input-row">
+        <input class="ascii-input" id="family-input" type="text" placeholder="e.g. The Royal Tenenbaums" value="">
+        <button class="arrow-btn" onclick="goTo('screen-members')">&#8594;</button>
+      </div>
+    </div>
+    <div style="border:1px solid #444; padding:14px 16px; cursor:pointer; margin:0 0 8px;" onclick="goTo('screen-home')">
+      <div style="color:#888; font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Pending invitation</div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="color:#fff; font-size:13px;">The Royal Tenenbaums</span>
+        <span style="color:#fff; border:1px solid #fff; padding:4px 12px; font-size:11px;">Join</span>
+      </div>
+    </div>
+    <div class="dots">
+      <span class="dot">&#9675;</span>
+      <span class="dot active">&#9679;</span>
+      <span class="dot">&#9675;</span>
+    </div>

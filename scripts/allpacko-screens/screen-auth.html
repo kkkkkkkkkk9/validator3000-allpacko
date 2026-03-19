@@ -1,0 +1,61 @@
+    <!-- Carousel: top 2/3 -->
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide">
+          <div class="slide-icon">
+    /\
+   /  \
+    |
+    |__________
+    |          \
+    |           |
+    ||         ||
+    ||         ||</div>
+          <div class="slide-title">Allpacko</div>
+          <div class="slide-desc">The family packing app. Build lists together, never forget a thing.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  ___________
+ |  Toiletries |
+ |  Tech       |
+ |  Outfits    |
+ |_____________|</div>
+          <div class="slide-title">Build it once, pack forever</div>
+          <div class="slide-desc">Create reusable packing lists called bundles. Mark them as essentials and they auto-add to every trip.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  Mom [======  ] 80%
+  Dad [====    ] 60%
+  Kid [==      ] 30%</div>
+          <div class="slide-title">Everyone's on the same page</div>
+          <div class="slide-desc">See who's packed, who's not, and who's packing what. Pack for your kids and pets too.</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-icon">
+  [x] Passport
+  [x] Charger
+  [ ] Sunscreen
+  [ ] Kindle</div>
+          <div class="slide-title">Leave the stress at home</div>
+          <div class="slide-desc">Check things off as you pack. Everyone sees what's left. Walk out the door knowing nothing's forgotten.</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="carousel-dots">
+        <button class="carousel-arrow hidden" id="carousel-prev" onclick="carouselGo(-1)">&larr;</button>
+        <span class="carousel-dot active" onclick="carouselSetSlide(0,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(1,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(2,true)"></span>
+        <span class="carousel-dot" onclick="carouselSetSlide(3,true)"></span>
+        <button class="carousel-arrow" id="carousel-next" onclick="carouselGo(1)">&rarr;</button>
+      </div>
+    </div>
+    <!-- Bottom 1/3: phone sign in -->
+    <div style="padding:0 24px;">
+      <div style="color:#888; font-size:12px; text-align:center; margin-bottom:8px;">Continue with phone number</div>
+      <div class="input-row" style="margin-top:0;">
+        <input class="ascii-input" id="phone-input" type="tel" placeholder="+1 (555) 000-0000" value="" autofocus>
+        <button class="arrow-btn" onclick="goTo('screen-otp')">&#8594;</button>
+      </div>
+    </div>
